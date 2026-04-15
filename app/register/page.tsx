@@ -1,7 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { registerUser } from "../actions";
+import { useActionState } from "react";
 
 export default function RegisterPage() {
+  const [state, formAction] = useActionState(registerUser, { message: "" });
+
   return (
     <div className="flex min-h-screen">
       <div className="hidden lg:block lg:w-3/5 relative">
@@ -25,13 +31,17 @@ export default function RegisterPage() {
             Create Account
           </h2>
 
-          <form className="space-y-6">
+          <form className="space-y-6" action={formAction}>
+            {state?.message && (
+              <p className="text-red-500 text-sm">{state.message}</p>
+            )}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Name
               </label>
               <input
                 type="text"
+                name="name"
                 placeholder="Enter your name"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
@@ -43,6 +53,7 @@ export default function RegisterPage() {
               </label>
               <input
                 type="text"
+                name="phoneNumber"
                 placeholder="Enter your phone number"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
@@ -54,6 +65,7 @@ export default function RegisterPage() {
               </label>
               <input
                 type="email"
+                name="email"
                 placeholder="name@email.com"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
@@ -65,12 +77,13 @@ export default function RegisterPage() {
               </label>
               <input
                 type="password"
+                name="password"
                 placeholder="Enter your password"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Confirm Password
               </label>
@@ -79,24 +92,12 @@ export default function RegisterPage() {
                 placeholder="Confirm your password"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
-            </div>
-
-            {/* <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="rounded text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-gray-600 hover:underline">
-                  Remember me
-                </span>
-              </label>
-              <a href="#" className="text-blue-600 hover:underline">
-                Forgot password?
-              </a>
             </div> */}
 
-            <button className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors mt-2">
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors mt-2"
+            >
               Register
             </button>
           </form>

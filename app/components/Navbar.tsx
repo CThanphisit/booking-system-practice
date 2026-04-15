@@ -40,9 +40,14 @@ export default function Navbar() {
               เข้าสู่ระบบ
             </button>
           </Link>
-          <button className="text-sm px-4 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600 transition-colors duration-150 font-medium">
+          {/* <button className="text-sm px-4 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600 transition-colors duration-150 font-medium">
             สมัครสมาชิก
-          </button>
+          </button> */}
+          <Link href="/register">
+            <button className="border border-gray-200 text-sm px-4 py-2 rounded-lg text-gray-600 hover:bg-sand-100 transition-colors duration-150">
+              สมัครสมาชิก
+            </button>
+          </Link>
         </div>
 
         {/* Mobile hamburger */}

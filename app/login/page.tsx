@@ -1,7 +1,29 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { loginUser } from "../actions";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [state, formAction] = useActionState(loginUser, {
+    success: false,
+    message: "",
+    accessToken: null,
+  });
+
+  useEffect(() => {
+    if (state.success && state.accessToken) {
+      // เก็บ Token ลง localStorage
+      localStorage.setItem("access_token", state.accessToken);
+
+      // หลังจากเก็บเสร็จค่อยเปลี่ยนหน้า
+      router.push("/dashboard");
+    }
+  }, [state, router]);
+
   return (
     <div className="flex min-h-screen">
       <div className="hidden lg:block lg:w-3/5 relative">
@@ -25,13 +47,14 @@ export default function LoginPage() {
             Welcome Back
           </h2>
 
-          <form className="space-y-6">
+          <form className="space-y-6" action={formAction}>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Email
               </label>
               <input
                 type="text"
+                name="email"
                 placeholder="Email"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
@@ -43,6 +66,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="password"
+                name="password"
                 placeholder="Password"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
@@ -61,7 +85,10 @@ export default function LoginPage() {
               </a>
             </div>
 
-            <button className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Sign in
             </button>
 
