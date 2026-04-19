@@ -2,27 +2,99 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { loginUser } from "../actions";
-import { useActionState, useEffect } from "react";
+// import { loginUser } from "../actions";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import z, { email } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.email("รูปแบบอีเมลไม่ถูกต้อง"),
+  password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
+});
+
+type LoginFromValue = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const [state, formAction] = useActionState(loginUser, {
-    success: false,
-    message: "",
-    accessToken: null,
+  const [loading, setLoading] = useState(false);
+  // const [errors, setErrors] = useState<{
+  //   email?: string[];
+  //   password?: string[];
+  // }>({});
+  const [generalError, setGeneralError] = useState(""); // สำหรับ error อื่นๆ เช่น Login Failed
+  const [serverError, setServerError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<LoginFromValue>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
   });
 
-  useEffect(() => {
-    if (state.success && state.accessToken) {
-      // เก็บ Token ลง localStorage
-      localStorage.setItem("access_token", state.accessToken);
+  // const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setErrors({});
+  //   setGeneralError("");
 
-      // หลังจากเก็บเสร็จค่อยเปลี่ยนหน้า
-      router.push("/dashboard");
+  //   const formData = new FormData(e.currentTarget);
+  //   const data = Object.fromEntries(formData.entries());
+
+  //   const validation = loginSchema.safeParse(data);
+
+  //   if (!validation.success) {
+  //     const fieldErrors = validation.error.flatten().fieldErrors;
+  //     setErrors(fieldErrors);
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await fetch("http://localhost:3001/auth/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(validation.data),
+  //       credentials: "include", // ส่งคุกกี้ไปด้วย
+  //     });
+
+  //     console.log("res", res);
+
+  //     if (!res.ok) {
+  //       throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+  //     }
+  //     router.push("/dashboard");
+  //   } catch (err: any) {
+  //     setGeneralError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const onSubmit = async (data: LoginFromValue) => {
+    setServerError("");
+    try {
+      const res = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include", // ส่งคุกกี้ไปด้วย
+      });
+
+      if (!res.ok) {
+        throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      }
+    } catch (err: any) {
+      setServerError(err.message);
     }
-  }, [state, router]);
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -47,17 +119,22 @@ export default function LoginPage() {
             Welcome Back
           </h2>
 
-          <form className="space-y-6" action={formAction}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Email
               </label>
               <input
                 type="text"
-                name="email"
+                {...register("email")}
                 placeholder="Email"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div className="relative">
@@ -66,11 +143,20 @@ export default function LoginPage() {
               </label>
               <input
                 type="password"
-                name="password"
+                {...register("password")}
                 placeholder="Password"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
+
+            {generalError && (
+              <p className="text-red-600 font-bold">{generalError}</p>
+            )}
 
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -89,7 +175,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </button>
 
             {/* <button
@@ -113,10 +199,9 @@ export default function LoginPage() {
 
         <div className="flex justify-between items-center text-xs text-gray-400">
           <div className="flex items-center gap-1">
-            <span className="bg-blue-500 p-1 rounded-full text-white">f</span>
-            <span>@uiunicorn</span>
+            <span>travel</span>
           </div>
-          <span>© Perfect Login 2021</span>
+          <span>2026</span>
         </div>
       </div>
     </div>

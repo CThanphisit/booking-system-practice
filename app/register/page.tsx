@@ -4,9 +4,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { registerUser } from "../actions";
 import { useActionState } from "react";
+import z, { string } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const registerSchema = z.object({
+  name: z.string().min(1, "กรุณากรอกชื่อ"),
+  phoneNumber: z.string().min(10, "กรุณากรอกเบอร์โทรศัพท์"),
+  email: z.email("รูปแบบอีเมลไม่ถูกต้อง"),
+  password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
+});
+
+type RegisterFormValue = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-  const [state, formAction] = useActionState(registerUser, { message: "" });
+  // const [state, formAction] = useActionState(registerUser, { message: "" });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValue>({
+    resolver: zodResolver(registerSchema),
+    mode: "onChange",
+  });
+
+  const onSubmit = async (data: RegisterFormValue) => {
+    console.log("data", data);
+    const result = await registerUser(data);
+
+    console.log("result", result);
+    if (result?.error) {
+      alert(result.error);
+    }
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -31,20 +62,22 @@ export default function RegisterPage() {
             Create Account
           </h2>
 
-          <form className="space-y-6" action={formAction}>
-            {state?.message && (
-              <p className="text-red-500 text-sm">{state.message}</p>
-            )}
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Name
               </label>
               <input
                 type="text"
-                name="name"
+                {...register("name")}
                 placeholder="Enter your name"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -53,10 +86,15 @@ export default function RegisterPage() {
               </label>
               <input
                 type="text"
-                name="phoneNumber"
+                {...register("phoneNumber")}
                 placeholder="Enter your phone number"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -65,10 +103,15 @@ export default function RegisterPage() {
               </label>
               <input
                 type="email"
-                name="email"
+                {...register("email")}
                 placeholder="name@email.com"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -77,10 +120,15 @@ export default function RegisterPage() {
               </label>
               <input
                 type="password"
-                name="password"
+                {...register("password")}
                 placeholder="Enter your password"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* <div>
