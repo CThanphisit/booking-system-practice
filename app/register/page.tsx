@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { registerUser } from "../actions";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import z, { string } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +23,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterFormValue>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
@@ -145,8 +145,9 @@ export default function RegisterPage() {
             <button
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors mt-2"
+              disabled={isSubmitting}
             >
-              Register
+              {isSubmitting ? "Logind..." : "Register"}
             </button>
           </form>
 

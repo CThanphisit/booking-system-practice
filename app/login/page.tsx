@@ -18,12 +18,10 @@ type LoginFromValue = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   // const [errors, setErrors] = useState<{
   //   email?: string[];
   //   password?: string[];
   // }>({});
-  const [generalError, setGeneralError] = useState(""); // สำหรับ error อื่นๆ เช่น Login Failed
   const [serverError, setServerError] = useState("");
 
   const {
@@ -79,7 +77,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFromValue) => {
     setServerError("");
     try {
-      const res = await fetch("http://localhost:3001/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,6 +88,19 @@ export default function LoginPage() {
 
       if (!res.ok) {
         throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      }
+      console.log("res", res);
+
+      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        credentials: "include",
+      });
+
+      const user = await getMe.json();
+
+      if (user.role === "ADMIN") {
+        router.push("/admin/dashboard_admin");
+      } else {
+        router.push("/dashboard");
       }
     } catch (err: any) {
       setServerError(err.message);
@@ -154,10 +165,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {generalError && (
-              <p className="text-red-600 font-bold">{generalError}</p>
-            )}
-
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -174,8 +181,9 @@ export default function LoginPage() {
             <button
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={isSubmitting}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
 
             {/* <button

@@ -5,27 +5,51 @@ export function middleware(request: NextRequest) {
   const role = request.cookies.get("role")?.value;
   console.log("token:", token);
 
+  const isAdmin = role === "ADMIN";
+
   const pathname = request.nextUrl.pathname;
 
   const isAuthPage = pathname.startsWith("/login");
   console.log("isAuthPage", isAuthPage);
+  const isAdminRoute = pathname.startsWith("/admin");
 
   // เช็ค Login
   if (!token && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // กันกลับไปหน้า Login ถ้ามี token แล้ว
+  // login แล้ว → กันไม่ให้กลับ login
   if (token && isAuthPage) {
+    if (isAdmin) {
+      return NextResponse.redirect(
+        new URL("/admin/dashboard_admin", request.url),
+      );
+    }
     return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // ADMIN restriction
+  if (isAdmin && !isAdminRoute) {
+    return NextResponse.redirect(
+      new URL("/admin/dashboard_admin", request.url),
+    );
   }
 
   // protect admin route
   if (pathname.startsWith("/admin")) {
-    if (role !== "ADMIN") {
+    if (!isAdmin) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
+
+  // ถ้าเป็น admin ก็ต้องไปหน้า admin
+  // if (role === "ADMIN") {
+  //   return NextResponse.redirect(
+  //     new URL("/admin/dashboard_admin", request.url),
+  //   );
+  // } else {
+  //   return NextResponse.redirect(new URL("/dashboard", request.url));
+  // }
 
   return NextResponse.next();
 }
