@@ -11,12 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const roomSchema = z.object({
   roomNumber: z.string().min(1, "กรุณาระบุหมายเลขห้อง"),
   type: z.string(),
-  floor: z.coerce.number().min(1, "ชั้นต้องมากกว่า 0"),
-  maxOccupancy: z.coerce.number().min(1, "จำนวนคนต้องอย่างน้อย 1"),
-  pricePerNight: z.coerce.number().min(1, "ราคาต้องมากกว่า 0"),
+  floor: z.number().min(1, "ชั้นต้องมากกว่า 0"),
+  maxOccupancy: z.number().min(1, "จำนวนคนต้องอย่างน้อย 1"),
+  pricePerNight: z.number().min(1, "ราคาต้องมากกว่า 0"),
   status: z.string(),
   // amenities: z.array(z.string()),
-  description: z.string().min(1, "กรุณาระบุคำอธิบาย"),
+  description: z.string(),
   images: z.array(z.string()),
 });
 
@@ -49,9 +49,6 @@ const defaultAmenities = [
 ];
 
 export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
-  // const [form, setForm] = useState<RoomFormValues>(emptyForm);
-  // const [errors, setErrors] = useState<Partial<Record<keyof RoomFormValues, string>>>({});
-
   const {
     register,
     handleSubmit,
@@ -164,7 +161,7 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
               <label className="block text-sm text-gray-700 mb-1.5">ชั้น</label>
               <input
                 type="number"
-                {...register("floor")}
+                {...register("floor", { valueAsNumber: true })}
                 className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -212,7 +209,7 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
               </label>
               <input
                 type="number"
-                {...register("pricePerNight")}
+                {...register("pricePerNight", { valueAsNumber: true })}
                 className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                   errors.pricePerNight ? "border-red-400" : "border-gray-200"
                 }`}
@@ -229,7 +226,7 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
               </label>
               <input
                 type="number"
-                {...register("maxOccupancy")}
+                {...register("maxOccupancy", { valueAsNumber: true })}
                 className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>

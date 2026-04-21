@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Plus, Search, LayoutGrid, Table2 } from "lucide-react";
 import { Room, RoomStatus, RoomTypeName } from "@/types";
 import { mockRooms } from "@/lib/mock-rooms";
@@ -26,22 +26,31 @@ const STATUS_FILTERS: { label: string; value: RoomStatus | "ALL" }[] = [
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
+  console.log("rooms", rooms);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<RoomTypeName | "ALL">("ALL");
   const [statusFilter, setStatusFilter] = useState<RoomStatus | "ALL">("ALL");
   const [view, setView] = useState<"grid" | "table">("table");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
-  console.log("editingRoom", editingRoom);
 
-  useEffect(() => {
-    const getRooms = async () => {
+  const fetchRooms = async () => {
+    try {
       const res = await fetch("http://localhost:3001/room");
       const data = await res.json();
-      console.log("data", data);
-      setRooms(data);
+      setRooms(data); // อัปเดต State
+    } catch (error) {
+      console.error("ดึงข้อมูลไม่สำเร็จ:", error);
+    }
+  };
+
+  // 2. ใช้ใน useEffect ตอนโหลดหน้าแรก
+  useEffect(() => {
+    const load = async () => {
+      await fetchRooms();
     };
-    getRooms();
+
+    load();
   }, []);
 
   // ── Filter ──────────────────────────────────────────────────────────────────
@@ -90,21 +99,7 @@ export default function RoomsPage() {
   }
 
   const handleSave = async (values: RoomFormValues) => {
-    console.log("handleSaveData", values);
-    // if (editingRoom) {
-    //   setRooms((prev) =>
-    //     prev.map((r) => (r.id === editingRoom.id ? { ...r, ...values } : r)),
-    //   );
-    // } else {
-    //   const newRoom: Room = {
-    //     ...values,
-    //     id: String(Date.now()),
-    //     images: [],
-    //     createdAt: new Date().toISOString().slice(0, 10),
-    //   };
-    //   setRooms((prev) => [newRoom, ...prev]);
-    // }
-
+    console.log("values", values);
     if (editingRoom) {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/room/${editingRoom.id}`,
@@ -114,15 +109,16 @@ export default function RoomsPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(values),
-          credentials: "include", // ส่งคุกกี้ไปด้วย
+          credentials: "include",
         },
       );
 
-      if (!res.ok) {
+      if (res.ok) {
+        await fetchRooms();
+        setEditingRoom(null);
+      } else {
         throw new Error("แก้ไขห้องไม่สำเร็จ");
       }
-
-      // revalidatePath("/admin/rooms");
     } else {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/room`, {
         method: "POST",
@@ -130,10 +126,12 @@ export default function RoomsPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-        credentials: "include", // ส่งคุกกี้ไปด้วย
+        credentials: "include",
       });
 
-      if (!res.ok) {
+      if (res.ok) {
+        await fetchRooms();
+      } else {
         throw new Error("สร้างห้องไม่สำเร็จ");
       }
     }
@@ -236,24 +234,6 @@ export default function RoomsPage() {
               </option>
             ))}
           </select>
-
-          {/* View toggle */}
-          {/* <div className="flex border border-gray-200 rounded-md overflow-hidden">
-            <button
-              onClick={() => setView("grid")}
-              className={`p-2 ${view === "grid" ? "bg-indigo-50 text-indigo-600" : "text-gray-400 hover:bg-gray-50"}`}
-              title="Grid view"
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setView("table")}
-              className={`p-2 ${view === "table" ? "bg-indigo-50 text-indigo-600" : "text-gray-400 hover:bg-gray-50"}`}
-              title="Table view"
-            >
-              <Table2 className="w-4 h-4" />
-            </button>
-          </div> */}
 
           {/* Add button */}
           <button

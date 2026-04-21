@@ -16,8 +16,6 @@ export async function registerUser(data: {
     password: data.password,
   };
 
-  console.log("rawFormData", rawFormData);
-
   const res = await fetch("http://localhost:3001/auth/register", {
     method: "POST",
     headers: {

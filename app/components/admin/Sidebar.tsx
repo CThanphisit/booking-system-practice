@@ -49,7 +49,6 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const [user, setUser] = useState<User | null>(null);
-  console.log("user", user);
 
   const handleLogout = async () => {
     await fetch("http://localhost:3001/auth/logout", {

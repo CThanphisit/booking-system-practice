@@ -89,7 +89,6 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       }
-      console.log("res", res);
 
       const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         credentials: "include",

@@ -10,11 +10,7 @@ export default function DashboardPage() {
         credentials: "include",
       });
 
-      console.log("resGetMe", res);
-      console.log("status:", res.status);
-
       const data = await res.json();
-      console.log("data:", data);
     };
 
     getMe();

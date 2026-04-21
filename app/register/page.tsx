@@ -30,10 +30,8 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterFormValue) => {
-    console.log("data", data);
     const result = await registerUser(data);
 
-    console.log("result", result);
     if (result?.error) {
       alert(result.error);
     }
