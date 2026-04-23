@@ -54,9 +54,6 @@ export default function BookingFormClient({
   nights,
   guests,
 }: Props) {
-  console.log("room", room);
-  console.log("checkIn", checkIn);
-  console.log("checkOut", checkOut);
   const router = useRouter();
 
   const { user } = useAuth();
@@ -143,7 +140,7 @@ export default function BookingFormClient({
 
       console.log("resCreateBooking", res);
 
-      // router.push(`/booking/${room.id}/confirmation?${params.toString()}`);
+      router.push(`/booking/${room.id}/payment`);
     } catch {
       setLoading(false);
     }

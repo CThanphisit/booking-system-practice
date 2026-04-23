@@ -51,7 +51,7 @@ export type BookingStatus =
   | "COMPLETED"
   | "CANCELLED";
 
-export type PaymentStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
+export type PaymentStatus = "WAITING_REVIEW" | "APPROVED" | "REJECTED";
 
 export interface Booking {
   id: string;
@@ -65,11 +65,13 @@ export interface Booking {
   totalAmount: string;
   status: BookingStatus;
   note: string | null;
+  paymentDeadline: string | null;
   createdAt: string;
   updatedAt: string;
 
   room: Room;
   user: User;
+  payment?: Payment | null;
 }
 
 export type SearchParams = {
@@ -92,18 +94,33 @@ export type User = {
 export type MyBooking = {
   id: string;
   code: string;
-  room: {
-    roomNumber: string;
-    type: RoomTypeName;
-    floor: number;
-    images: string[];
-  };
   checkInDate: string;
   checkOutDate: string;
   nights: number;
   guestCount: number;
   totalAmount: number;
   status: BookingStatus;
-  note?: string;
+  note: string | null;
   createdAt: string;
+  payment?: Payment | null;
+
+  room: {
+    roomNumber: string;
+    type: RoomTypeName;
+    floor: number;
+    images: string[];
+  };
+};
+
+export type Payment = {
+  id: string;
+  bookingId: string;
+  amount: string; // Prisma Decimal → string
+  slipUrl: string;
+  status: PaymentStatus;
+  note: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };

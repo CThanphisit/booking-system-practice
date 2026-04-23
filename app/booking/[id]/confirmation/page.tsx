@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { CheckCircle, Calendar, Moon, Users, Download, Home, BookOpen } from "lucide-react";
+import {
+  CheckCircle,
+  Calendar,
+  Moon,
+  Users,
+  Download,
+  Home,
+  BookOpen,
+} from "lucide-react";
 
 type Props = {
   params: { roomId: string };
@@ -26,12 +34,12 @@ function formatDate(dateStr?: string) {
 
 export default function ConfirmationPage({ searchParams }: Props) {
   const {
-    code     = "BK-XXXX",
+    code = "BK-XXXX",
     checkIn,
     checkOut,
-    nights   = "1",
-    guests   = "1",
-    total    = "0",
+    nights = "1",
+    guests = "1",
+    total = "0",
     roomName = "ห้องพัก",
   } = searchParams;
 
@@ -62,7 +70,6 @@ export default function ConfirmationPage({ searchParams }: Props) {
     <div className="min-h-screen bg-stone-50 flex flex-col">
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-lg">
-
           {/* Success icon */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-20 h-20 rounded-full bg-emerald-50 border-4 border-emerald-100 flex items-center justify-center mb-5">
@@ -72,18 +79,22 @@ export default function ConfirmationPage({ searchParams }: Props) {
               จองสำเร็จแล้ว!
             </h1>
             <p className="text-stone-500 text-sm text-center leading-relaxed">
-              เราได้ส่งรายละเอียดการจองไปยังอีเมลของคุณแล้ว<br />
+              เราได้ส่งรายละเอียดการจองไปยังอีเมลของคุณแล้ว
+              <br />
               กรุณาตรวจสอบที่ inbox ของท่าน
             </p>
           </div>
 
           {/* Booking card */}
           <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden mb-6">
-
             {/* Code header */}
             <div className="bg-stone-900 px-6 py-5 text-center">
-              <p className="text-stone-400 text-xs mb-1.5 tracking-wider uppercase">Booking Code</p>
-              <p className="text-white text-3xl font-bold tracking-widest font-mono">{code}</p>
+              <p className="text-stone-400 text-xs mb-1.5 tracking-wider uppercase">
+                Booking Code
+              </p>
+              <p className="text-white text-3xl font-bold tracking-widest font-mono">
+                {code}
+              </p>
             </div>
 
             {/* Room name */}
@@ -107,7 +118,9 @@ export default function ConfirmationPage({ searchParams }: Props) {
                   <p className="text-xs text-stone-400 flex items-center gap-1.5 mb-1">
                     {d.icon} {d.label}
                   </p>
-                  <p className="text-sm font-medium text-stone-800">{d.value}</p>
+                  <p className="text-sm font-medium text-stone-800">
+                    {d.value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -116,7 +129,8 @@ export default function ConfirmationPage({ searchParams }: Props) {
             <div className="mx-6 mb-5 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <p className="text-sm text-emerald-700 font-medium">
-                การจองได้รับการยืนยันแล้ว
+                {/* การจองได้รับการยืนยันแล้ว */}
+                รอการตรวจสอบ
               </p>
             </div>
           </div>

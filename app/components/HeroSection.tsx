@@ -48,7 +48,8 @@ export default function HeroSection({ onSearch }: Props) {
         </h1>
 
         <p className="text-stone-400 text-lg sm:text-xl max-w-xl mb-10 leading-relaxed">
-          เลือกห้องพักที่ตรงกับความต้องการ ตั้งแต่ Standard ไปจนถึง Suite หรูพร้อมวิว Panoramic
+          เลือกห้องพักที่ตรงกับความต้องการ ตั้งแต่ Standard ไปจนถึง Suite
+          หรูพร้อมวิว Panoramic
         </p>
 
         {/* Search bar */}
@@ -57,7 +58,7 @@ export default function HeroSection({ onSearch }: Props) {
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-8">
+        {/* <div className="flex items-center gap-8">
           {STATS.map((s, i) => (
             <div key={s.label} className="flex items-center gap-8">
               {i > 0 && <div className="w-px h-8 bg-stone-700" />}
@@ -67,7 +68,7 @@ export default function HeroSection({ onSearch }: Props) {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Bottom fade */}

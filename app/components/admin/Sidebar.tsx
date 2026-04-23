@@ -29,7 +29,7 @@ const mainMenu: MenuItem[] = [
   { label: "Bookings", href: "/admin/bookings", icon: Calendar, badge: 8 },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
-  { label: "Reviews", href: "/admin/reviews", icon: Star },
+  // { label: "Reviews", href: "/admin/reviews", icon: Star },
 ];
 
 const insightsMenu: MenuItem[] = [
@@ -119,10 +119,10 @@ export default function Sidebar() {
         </p>
         <div className="space-y-1 mb-6">{renderMenu(mainMenu)}</div>
 
-        <p className="text-xs text-gray-400 px-3 mb-2 uppercase tracking-wider">
+        {/* <p className="text-xs text-gray-400 px-3 mb-2 uppercase tracking-wider">
           Insights
         </p>
-        <div className="space-y-1">{renderMenu(insightsMenu)}</div>
+        <div className="space-y-1">{renderMenu(insightsMenu)}</div> */}
       </nav>
 
       {/* User Profile */}

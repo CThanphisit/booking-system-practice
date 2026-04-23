@@ -90,7 +90,6 @@ export default function BookingDetailModal({
             <X className="w-5 h-5" />
           </button>
         </div>
-
         {/* Body */}
         <div className="px-6 py-5 space-y-5">
           {/* Status row */}
@@ -165,6 +164,58 @@ export default function BookingDetailModal({
             </div>
           )}
         </div>
+
+        {/* Payment */}
+        {booking.payment && (
+          <div className="bg-gray-50 rounded-lg p-4">
+            <p className="text-sm font-medium mb-3">หลักฐานการชำระเงิน</p>
+
+            {/* รูปสลิป */}
+            <img
+              src={`${process.env.NEXT_PUBLIC_API_URL}${booking.payment.slipUrl}`}
+              alt="slip"
+              className="w-full max-h-64 object-contain rounded border mb-3"
+            />
+
+            <p className="text-xs text-gray-500 mb-3">
+              ยอด ฿{booking.payment.amount.toLocaleString()} · upload เมื่อ{" "}
+              {/* {formatDate(booking.payment.createdAt)} */}
+            </p>
+
+            {/* แสดงปุ่มเฉพาะตอนรอตรวจ */}
+            {/* {booking.payment.status === "WAITING_REVIEW" && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleApprove(booking.payment.id)}
+                  className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg"
+                >
+                  อนุมัติ
+                </button>
+                <button
+                  onClick={() => setShowRejectForm(true)}
+                  className="flex-1 border border-red-300 text-red-600 text-sm py-2 rounded-lg"
+                >
+                  ปฏิเสธ
+                </button>
+              </div>
+            )} */}
+
+            {/* แสดงสถานะถ้าตรวจแล้ว */}
+            {booking.payment.status === "APPROVED" && (
+              <p className="text-sm text-emerald-600 font-medium">
+                ✓ อนุมัติแล้ว
+              </p>
+            )}
+            {booking.payment.status === "REJECTED" && (
+              <div>
+                <p className="text-sm text-red-600 font-medium">✗ ปฏิเสธแล้ว</p>
+                <p className="text-xs text-gray-500">
+                  เหตุผล: {booking.payment.note}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Action Footer */}
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
