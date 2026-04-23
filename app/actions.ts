@@ -4,25 +4,30 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function registerUser(data: {
-  name: string;
-  phoneNumber: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
+  phoneNumber: string;
 }) {
+  console.log("forRegister", data);
   const rawFormData = {
-    name: data.name,
+    first_name: data.first_name,
+    last_name: data.last_name,
     phoneNumber: data.phoneNumber,
     email: data.email,
     password: data.password,
   };
 
-  const res = await fetch("http://localhost:3001/auth/register", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(rawFormData),
   });
+
+  console.log("resRegis", res);
 
   if (!res.ok) {
     // แทนที่จะ throw error ให้ return object กลับไปแสดงที่ UI

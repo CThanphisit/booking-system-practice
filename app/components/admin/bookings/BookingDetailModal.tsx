@@ -1,9 +1,18 @@
 "use client";
 
-import { X, User, BedDouble, Calendar, Phone, Mail, MessageSquare } from "lucide-react";
+import {
+  X,
+  User,
+  BedDouble,
+  Calendar,
+  Phone,
+  Mail,
+  MessageSquare,
+} from "lucide-react";
 import { Booking, BookingStatus } from "@/types";
 import BookingStatusBadge from "./BookingStatusBadge";
 import PaymentBadge from "./PaymentBadge";
+import { format, parseISO } from "date-fns";
 
 type Props = {
   booking: Booking | null;
@@ -43,11 +52,23 @@ const ACTION_BUTTONS: {
   },
 ];
 
-export default function BookingDetailModal({ booking, onClose, onUpdateStatus }: Props) {
+export default function BookingDetailModal({
+  booking,
+  onClose,
+  onUpdateStatus,
+}: Props) {
   if (!booking) return null;
 
   const nights = booking.nights;
-  const pricePerNight = Math.round(booking.totalAmount / nights);
+  const pricePerNight = Math.round(+booking.totalAmount / nights);
+
+  const checkIn = parseISO(booking.checkInDate);
+  const checkOut = parseISO(booking.checkOutDate);
+  const createdAt = parseISO(booking.createdAt);
+
+  const checkInDate = format(checkIn, "dd/MM/yyyy");
+  const checkOutDate = format(checkOut, "dd/MM/yyyy");
+  const createdAtDate = format(createdAt, "dd/MM/yyyy");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -58,7 +79,9 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
             <h2 className="text-base font-medium text-gray-900">
               รายละเอียดการจอง
             </h2>
-            <p className="text-xs text-gray-500 font-mono mt-0.5">{booking.code}</p>
+            <p className="text-xs text-gray-500 font-mono mt-0.5">
+              {booking.code}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -73,9 +96,9 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
           {/* Status row */}
           <div className="flex items-center gap-3 flex-wrap">
             <BookingStatusBadge status={booking.status} />
-            <PaymentBadge status={booking.paymentStatus} />
+            {/* <PaymentBadge status={booking.paymentStatus} /> */}
             <span className="text-xs text-gray-400 ml-auto">
-              จองเมื่อ {booking.createdAt}
+              จองเมื่อ {createdAtDate}
             </span>
           </div>
 
@@ -86,15 +109,15 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
             </p>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <User className="w-4 h-4 text-gray-400 shrink-0" />
-              {booking.customer.name}
+              {booking.user.first_name}
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Mail className="w-4 h-4 text-gray-400 shrink-0" />
-              {booking.customer.email}
+              {booking.user.email}
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Phone className="w-4 h-4 text-gray-400 shrink-0" />
-              {booking.customer.phone}
+              {booking.user.phoneNumber}
             </div>
           </div>
 
@@ -109,7 +132,7 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
-              {booking.checkIn} → {booking.checkOut}
+              {checkInDate} → {checkOutDate}
               <span className="text-gray-400">({nights} คืน)</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -121,12 +144,16 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
           {/* Price breakdown */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="flex justify-between px-4 py-3 text-sm text-gray-600 border-b border-gray-100">
-              <span>฿{pricePerNight.toLocaleString()} × {nights} คืน</span>
+              <span>
+                ฿{pricePerNight.toLocaleString()} × {nights} คืน
+              </span>
               <span>฿{booking.totalAmount.toLocaleString()}</span>
             </div>
             <div className="flex justify-between px-4 py-3 font-medium text-gray-900 bg-gray-50">
               <span>ราคารวม</span>
-              <span className="text-indigo-600">฿{booking.totalAmount.toLocaleString()}</span>
+              <span className="text-indigo-600">
+                ฿{booking.totalAmount.toLocaleString()}
+              </span>
             </div>
           </div>
 
@@ -148,7 +175,9 @@ export default function BookingDetailModal({ booking, onClose, onUpdateStatus }:
             >
               ปิด
             </button>
-            {ACTION_BUTTONS.filter((a) => a.forStatuses.includes(booking.status)).map((action) => (
+            {ACTION_BUTTONS.filter((a) =>
+              a.forStatuses.includes(booking.status),
+            ).map((action) => (
               <button
                 key={action.toStatus}
                 onClick={() => {

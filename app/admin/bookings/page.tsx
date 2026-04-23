@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Download, Eye } from "lucide-react";
 import { mockBookings } from "@/lib/mock-bookings";
 import { Booking, BookingStatus } from "@/types";
@@ -8,6 +8,7 @@ import Header from "@/app/components/admin/Header";
 import PaymentBadge from "@/app/components/admin/bookings/PaymentBadge";
 import BookingStatusBadge from "@/app/components/admin/bookings/BookingStatusBadge";
 import BookingDetailModal from "@/app/components/admin/bookings/BookingDetailModal";
+import { format, parseISO } from "date-fns";
 
 type Tab = "ALL" | BookingStatus;
 
@@ -21,35 +22,57 @@ const TABS: { label: string; value: Tab }[] = [
 ];
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>(mockBookings);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  console.log("bookings", bookings);
   const [tab, setTab] = useState<Tab>("ALL");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [sortBy, setSortBy] = useState<"createdAt" | "checkIn" | "totalAmount">(
-    "createdAt",
-  );
+  const [sortBy, setSortBy] = useState<
+    "createdAt" | "checkInDate" | "totalAmount"
+  >("createdAt");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [page, setPage] = useState(1);
   const PER_PAGE = 5;
 
+  const getListBookings = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log("dataResBooking", data);
+      setBookings(data);
+    }
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      await getListBookings();
+    };
+
+    load();
+  }, []);
+
   // ── Filter + Sort ────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
-    let list = bookings.filter((b) => {
+    const list = bookings?.filter((b) => {
       const q = search.toLowerCase();
       const matchSearch =
         b.code.toLowerCase().includes(q) ||
-        b.customer.name.toLowerCase().includes(q) ||
-        b.customer.email.toLowerCase().includes(q) ||
+        b.user.first_name.toLowerCase().includes(q) ||
+        b.user.email.toLowerCase().includes(q) ||
         b.room.roomNumber.includes(q);
       const matchTab = tab === "ALL" || b.status === tab;
-      const matchFrom = !dateFrom || b.checkIn >= dateFrom;
-      const matchTo = !dateTo || b.checkIn <= dateTo;
+      const matchFrom = !dateFrom || b.checkInDate >= dateFrom;
+      const matchTo = !dateTo || b.checkInDate <= dateTo;
       return matchSearch && matchTab && matchFrom && matchTo;
     });
 
     list.sort((a, b) => {
-      if (sortBy === "totalAmount") return b.totalAmount - a.totalAmount;
+      if (sortBy === "totalAmount") return +b.totalAmount - +a.totalAmount;
       return b[sortBy] > a[sortBy] ? 1 : -1;
     });
 
@@ -78,16 +101,34 @@ export default function BookingsPage() {
   const totalRevenue = useMemo(
     () =>
       bookings
-        .filter((b) => b.paymentStatus === "PAID")
-        .reduce((s, b) => s + b.totalAmount, 0),
+        // .filter((b) => b.paymentStatus === "PAID")
+        .reduce((s, b) => s + +b.totalAmount, 0),
     [bookings],
   );
 
   // ── Handlers ────────────────────────────────────────────────────────────────
-  const handleUpdateStatus = (id: string, status: BookingStatus) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status } : b)),
+  const handleUpdateStatus = async (id: string, status: BookingStatus) => {
+    // setBookings((prev) =>
+    //   prev.map((b) => (b.id === id ? { ...b, status } : b)),
+    // );
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+        credentials: "include",
+      },
     );
+
+    if (res.ok) {
+      await getListBookings();
+    } else {
+      console.log("errUpdate", res);
+    }
   };
 
   const handleTabChange = (value: Tab) => {
@@ -244,63 +285,70 @@ export default function BookingsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {paginated.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-5 py-3 font-mono text-xs text-gray-700">
-                      {booking.code}
-                    </td>
-                    <td className="px-5 py-3">
-                      <div>
-                        <p className="text-gray-900 font-medium">
-                          {booking.customer.name}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {booking.customer.email}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3">
-                      <div>
-                        <p className="text-gray-700">
-                          ห้อง {booking.room.roomNumber}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {booking.room.type}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3 text-gray-600 text-xs">
-                      {booking.checkIn}
-                    </td>
-                    <td className="px-5 py-3 text-gray-600 text-xs">
-                      {booking.checkOut}
-                    </td>
-                    <td className="px-5 py-3 text-gray-600 text-center">
-                      {booking.nights}
-                    </td>
-                    <td className="px-5 py-3 font-medium text-gray-900">
-                      ฿{booking.totalAmount.toLocaleString()}
-                    </td>
-                    <td className="px-5 py-3">
-                      <PaymentBadge status={booking.paymentStatus} />
-                    </td>
-                    <td className="px-5 py-3">
-                      <BookingStatusBadge status={booking.status} />
-                    </td>
-                    <td className="px-5 py-3">
-                      <button
-                        onClick={() => setSelectedBooking(booking)}
-                        className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        ดูรายละเอียด
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {paginated.map((booking) => {
+                  const checkInParse = parseISO(booking.checkInDate);
+                  const checkOutParse = parseISO(booking.checkOutDate);
+
+                  const checkInDate = format(checkInParse, "dd/MM/yyyy");
+                  const checkOutDate = format(checkOutParse, "dd/MM/yyyy");
+                  return (
+                    <tr
+                      key={booking.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-5 py-3 font-mono text-xs text-gray-700">
+                        {booking.code}
+                      </td>
+                      <td className="px-5 py-3">
+                        <div>
+                          <p className="text-gray-900 font-medium">
+                            {booking.user.first_name}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {booking.user.email}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div>
+                          <p className="text-gray-700">
+                            ห้อง {booking.room.roomNumber}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {booking.room.type}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-gray-600 text-xs">
+                        {checkInDate}
+                      </td>
+                      <td className="px-5 py-3 text-gray-600 text-xs">
+                        {checkOutDate}
+                      </td>
+                      <td className="px-5 py-3 text-gray-600 text-center">
+                        {booking.nights}
+                      </td>
+                      <td className="px-5 py-3 font-medium text-gray-900">
+                        ฿{booking.totalAmount.toLocaleString()}
+                      </td>
+                      <td className="px-5 py-3">
+                        {/* <PaymentBadge status={booking.paymentStatus} /> */}
+                      </td>
+                      <td className="px-5 py-3">
+                        <BookingStatusBadge status={booking.status} />
+                      </td>
+                      <td className="px-5 py-3">
+                        <button
+                          onClick={() => setSelectedBooking(booking)}
+                          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 whitespace-nowrap"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          ดูรายละเอียด
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
                 {paginated.length === 0 && (
                   <tr>
                     <td

@@ -29,6 +29,19 @@ export type RoomFormValues = {
   description: string;
 };
 
+export interface RoomValues {
+  id: string;
+  roomNumber: string;
+  floor: number;
+  type: RoomTypeName;
+  maxOccupancy: number;
+  pricePerNight: number;
+  status: RoomStatus;
+  description: string;
+  images: string[];
+  createdAt: string;
+}
+
 // ─── Booking Types ─────────────────────────────────────────────────────────────
 
 export type BookingStatus =
@@ -40,27 +53,57 @@ export type BookingStatus =
 
 export type PaymentStatus = "PENDING" | "PAID" | "REFUNDED" | "FAILED";
 
-export type Booking = {
+export interface Booking {
   id: string;
   code: string;
-  customer: {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-  };
-  room: {
-    id: string;
-    roomNumber: string;
-    type: RoomTypeName;
-  };
+  userId: string;
+  roomId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  nights: number;
+  guestCount: number;
+  totalAmount: string;
+  status: BookingStatus;
+  note: string | null;
+  createdAt: string;
+  updatedAt: string;
+
+  room: Room;
+  user: User;
+}
+
+export type SearchParams = {
   checkIn: string;
   checkOut: string;
+  guests: number;
+  type: RoomTypeName | "ALL";
+  maxPrice: number;
+};
+
+export type User = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+  phoneNumber: string;
+};
+
+export type MyBooking = {
+  id: string;
+  code: string;
+  room: {
+    roomNumber: string;
+    type: RoomTypeName;
+    floor: number;
+    images: string[];
+  };
+  checkInDate: string;
+  checkOutDate: string;
   nights: number;
   guestCount: number;
   totalAmount: number;
   status: BookingStatus;
-  paymentStatus: PaymentStatus;
-  createdAt: string;
   note?: string;
+  createdAt: string;
 };

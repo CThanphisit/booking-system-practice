@@ -9,7 +9,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const registerSchema = z.object({
-  name: z.string().min(1, "กรุณากรอกชื่อ"),
+  first_name: z.string().min(1, "กรุณากรอกชื่อ"),
+  last_name: z.string().min(1, "กรุณากรอกนามสกุล"),
   phoneNumber: z.string().min(10, "กรุณากรอกเบอร์โทรศัพท์"),
   email: z.email("รูปแบบอีเมลไม่ถูกต้อง"),
   password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
@@ -30,6 +31,7 @@ export default function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterFormValue) => {
+    console.log("data", data);
     const result = await registerUser(data);
 
     if (result?.error) {
@@ -63,17 +65,34 @@ export default function RegisterPage() {
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
-                Name
+                ชื่อ
               </label>
               <input
                 type="text"
-                {...register("name")}
+                {...register("first_name")}
                 placeholder="Enter your name"
                 className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
               />
-              {errors.name && (
+              {errors.first_name && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
+                  {errors.first_name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                นามสกุล
+              </label>
+              <input
+                type="text"
+                {...register("last_name")}
+                placeholder="Enter your name"
+                className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              />
+              {errors.last_name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.last_name.message}
                 </p>
               )}
             </div>

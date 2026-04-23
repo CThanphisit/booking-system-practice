@@ -66,6 +66,8 @@ export default function Sidebar() {
         credentials: "include",
       });
 
+      console.log("datagetMe", res);
+
       const data = await res.json();
 
       setUser(data);

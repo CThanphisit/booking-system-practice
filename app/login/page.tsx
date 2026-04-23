@@ -3,11 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 // import { loginUser } from "../actions";
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import z, { email } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../context/AuthContext";
 
 const loginSchema = z.object({
   email: z.email("รูปแบบอีเมลไม่ถูกต้อง"),
@@ -18,10 +19,8 @@ type LoginFromValue = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  // const [errors, setErrors] = useState<{
-  //   email?: string[];
-  //   password?: string[];
-  // }>({});
+  const { user, isLoading, checkAuth } = useAuth();
+
   const [serverError, setServerError] = useState("");
 
   const {
@@ -90,6 +89,7 @@ export default function LoginPage() {
         throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       }
 
+      await checkAuth();
       const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         credentials: "include",
       });
@@ -99,7 +99,7 @@ export default function LoginPage() {
       if (user.role === "ADMIN") {
         router.push("/admin/dashboard_admin");
       } else {
-        router.push("/dashboard");
+        router.push("/");
       }
     } catch (err: any) {
       setServerError(err.message);
@@ -120,7 +120,7 @@ export default function LoginPage() {
 
       <div className="w-full lg:w-2/5 flex flex-col justify-between p-8 md:p-12">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-tr from-purple-400 to-yellow-400 rounded-full"></div>
+          <div className="w-8 h-8 from-purple-400 to-yellow-400 rounded-full"></div>
           <span className="font-bold text-gray-800">UI Unicorn</span>
         </div>
 

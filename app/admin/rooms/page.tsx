@@ -36,7 +36,7 @@ export default function RoomsPage() {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch("http://localhost:3001/room");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/room`);
       const data = await res.json();
       setRooms(data); // อัปเดต State
     } catch (error) {
