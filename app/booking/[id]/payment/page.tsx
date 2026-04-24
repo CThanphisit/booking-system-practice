@@ -12,7 +12,7 @@ export default async function PaymentPage({ params }: Props) {
   const { id } = await params;
   const cookieStore = await cookies();
 
-  const cookieHeader = cookieStore.toString();
+  const cookieHeader = await cookieStore.toString();
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`, {
     headers: { cookie: cookieHeader },

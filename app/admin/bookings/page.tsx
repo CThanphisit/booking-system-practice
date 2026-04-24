@@ -136,6 +136,58 @@ export default function BookingsPage() {
     setPage(1);
   };
 
+  const handleApprovePayment = async (id: string, adminId: string) => {
+    try {
+      const res = await fetch(
+        `
+      ${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
+          credentials: "include",
+        },
+      );
+
+      if (res.ok) {
+        await getListBookings();
+      } else {
+        console.log("ApproveError", res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleRejectPayment = async (
+    id: string,
+    adminId: string,
+    note: string,
+  ) => {
+    try {
+      const res = await fetch(
+        `
+      ${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "REJECT",
+            adminId: adminId,
+            note: note,
+          }),
+          credentials: "include",
+        },
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <Header
@@ -332,7 +384,7 @@ export default function BookingsPage() {
                         ฿{booking.totalAmount.toLocaleString()}
                       </td>
                       <td className="px-5 py-3">
-                        {/* <PaymentBadge status={booking.paymentStatus} /> */}
+                        <PaymentBadge status={booking.payment?.status} />
                       </td>
                       <td className="px-5 py-3">
                         <BookingStatusBadge status={booking.status} />
@@ -412,6 +464,8 @@ export default function BookingsPage() {
         booking={selectedBooking}
         onClose={() => setSelectedBooking(null)}
         onUpdateStatus={handleUpdateStatus}
+        onApprovePayment={handleApprovePayment}
+        onRejectPayment={handleRejectPayment}
       />
     </>
   );

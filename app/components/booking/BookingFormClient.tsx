@@ -138,9 +138,11 @@ export default function BookingFormClient({
         throw new Error("การจองไม่สําเร็จ");
       }
 
+      const dataBooking = await res.json();
+
       console.log("resCreateBooking", res);
 
-      router.push(`/booking/${room.id}/payment`);
+      router.push(`/booking/${dataBooking.id}/payment`);
     } catch {
       setLoading(false);
     }

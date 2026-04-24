@@ -8,16 +8,22 @@ import {
   Phone,
   Mail,
   MessageSquare,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { Booking, BookingStatus } from "@/types";
 import BookingStatusBadge from "./BookingStatusBadge";
 import PaymentBadge from "./PaymentBadge";
 import { format, parseISO } from "date-fns";
+import { useState } from "react";
+import { useAuth } from "@/app/context/AuthContext";
 
 type Props = {
   booking: Booking | null;
   onClose: () => void;
   onUpdateStatus: (id: string, status: BookingStatus) => void;
+  onApprovePayment: (paymentId: string, adminId: string) => void;
+  onRejectPayment: (paymentId: string, adminId: string, note: string) => void;
 };
 
 const ACTION_BUTTONS: {
@@ -56,19 +62,29 @@ export default function BookingDetailModal({
   booking,
   onClose,
   onUpdateStatus,
+  onApprovePayment,
+  onRejectPayment,
 }: Props) {
+  const { user } = useAuth();
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejectNote, setRejectNote] = useState("");
   if (!booking) return null;
 
   const nights = booking.nights;
   const pricePerNight = Math.round(+booking.totalAmount / nights);
 
-  const checkIn = parseISO(booking.checkInDate);
-  const checkOut = parseISO(booking.checkOutDate);
-  const createdAt = parseISO(booking.createdAt);
+  const handleReject = () => {
+    if (!rejectNote.trim() || !booking.payment) return;
+    onRejectPayment(booking.payment.id, user!.id, rejectNote);
+    setShowRejectForm(false);
+    setRejectNote("");
+    onClose();
+  };
 
-  const checkInDate = format(checkIn, "dd/MM/yyyy");
-  const checkOutDate = format(checkOut, "dd/MM/yyyy");
-  const createdAtDate = format(createdAt, "dd/MM/yyyy");
+  const formatDate = (date: string) => {
+    const parseDate = parseISO(date);
+    return format(parseDate, "dd/MM/yyyy");
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -97,7 +113,7 @@ export default function BookingDetailModal({
             <BookingStatusBadge status={booking.status} />
             {/* <PaymentBadge status={booking.paymentStatus} /> */}
             <span className="text-xs text-gray-400 ml-auto">
-              จองเมื่อ {createdAtDate}
+              จองเมื่อ {formatDate(booking.createdAt)}
             </span>
           </div>
 
@@ -131,7 +147,8 @@ export default function BookingDetailModal({
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
-              {checkInDate} → {checkOutDate}
+              {formatDate(booking.checkInDate)} →{" "}
+              {formatDate(booking.checkOutDate)}
               <span className="text-gray-400">({nights} คืน)</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -179,26 +196,61 @@ export default function BookingDetailModal({
 
             <p className="text-xs text-gray-500 mb-3">
               ยอด ฿{booking.payment.amount.toLocaleString()} · upload เมื่อ{" "}
-              {/* {formatDate(booking.payment.createdAt)} */}
+              {formatDate(booking.payment.createdAt)}
             </p>
 
-            {/* แสดงปุ่มเฉพาะตอนรอตรวจ */}
-            {/* {booking.payment.status === "WAITING_REVIEW" && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleApprove(booking.payment.id)}
-                  className="flex-1 bg-emerald-600 text-white text-sm py-2 rounded-lg"
-                >
-                  อนุมัติ
-                </button>
-                <button
-                  onClick={() => setShowRejectForm(true)}
-                  className="flex-1 border border-red-300 text-red-600 text-sm py-2 rounded-lg"
-                >
-                  ปฏิเสธ
-                </button>
+            {/* ✅ ปุ่ม Approve/Reject — เปิดแล้ว */}
+            {booking.payment.status === "WAITING_REVIEW" && (
+              <div className="space-y-2">
+                {!showRejectForm ? (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        onApprovePayment(booking.payment!.id, user!.id);
+                        onClose();
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm py-2 rounded-lg transition-colors"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      อนุมัติ
+                    </button>
+                    <button
+                      onClick={() => setShowRejectForm(true)}
+                      className="flex-1 flex items-center justify-center gap-1.5 border border-red-300 text-red-600 hover:bg-red-50 text-sm py-2 rounded-lg transition-colors"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      ปฏิเสธ
+                    </button>
+                  </div>
+                ) : (
+                  // Reject form
+                  <div className="space-y-2">
+                    <textarea
+                      rows={2}
+                      placeholder="ระบุเหตุผลการปฏิเสธ เช่น ยอดโอนไม่ตรง..."
+                      value={rejectNote}
+                      onChange={(e) => setRejectNote(e.target.value)}
+                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-200 resize-none"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowRejectForm(false)}
+                        className="flex-1 text-sm border border-gray-200 rounded-lg py-1.5 hover:bg-gray-50"
+                      >
+                        ยกเลิก
+                      </button>
+                      <button
+                        onClick={handleReject}
+                        disabled={!rejectNote.trim()}
+                        className="flex-1 text-sm bg-red-600 hover:bg-red-700 disabled:bg-gray-200 text-white disabled:text-gray-400 rounded-lg py-1.5 transition-colors"
+                      >
+                        ยืนยันปฏิเสธ
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )} */}
+            )}
 
             {/* แสดงสถานะถ้าตรวจแล้ว */}
             {booking.payment.status === "APPROVED" && (
@@ -218,7 +270,7 @@ export default function BookingDetailModal({
         )}
 
         {/* Action Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+        {/* <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
           <div className="flex flex-wrap gap-2 justify-end">
             <button
               onClick={onClose}
@@ -241,6 +293,47 @@ export default function BookingDetailModal({
               </button>
             ))}
           </div>
+        </div> */}
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+          <div className="flex flex-wrap gap-2 justify-end">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-100 text-gray-600"
+            >
+              ปิด
+            </button>
+            {/* ✅ เพิ่มเงื่อนไขเช็ค payment ก่อน Confirm */}
+            {ACTION_BUTTONS.filter((a) => {
+              if (!a.forStatuses.includes(booking.status)) return false;
+              if (a.toStatus === "CONFIRMED") {
+                return booking.payment?.status === "APPROVED";
+              }
+              return true;
+            }).map((action) => (
+              <button
+                key={action.toStatus}
+                onClick={() => {
+                  onUpdateStatus(booking.id, action.toStatus);
+                  onClose();
+                }}
+                className={`px-4 py-2 text-sm rounded-md transition-colors ${action.className}`}
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+
+          {/* แจ้งเตือนถ้า PENDING แต่ยังไม่มี payment */}
+          {booking.status === "PENDING" &&
+            booking.payment?.status !== "APPROVED" && (
+              <p className="text-xs text-amber-600 mt-2 text-right">
+                {!booking.payment
+                  ? "รอ user upload สลิปก่อนยืนยัน"
+                  : booking.payment.status === "WAITING_REVIEW"
+                    ? "กรุณาตรวจสลิปก่อนกดยืนยัน"
+                    : "สลิปถูกปฏิเสธ รอ user upload ใหม่"}
+              </p>
+            )}
         </div>
       </div>
     </div>

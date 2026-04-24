@@ -8,61 +8,54 @@ import {
   Home,
   BookOpen,
 } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { cookies } from "next/headers";
 
 type Props = {
-  params: { roomId: string };
-  searchParams: {
-    code?: string;
-    checkIn?: string;
-    checkOut?: string;
-    nights?: string;
-    guests?: string;
-    total?: string;
-    roomName?: string;
-  };
+  params: { id: string };
 };
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return "-";
-  return new Date(dateStr).toLocaleDateString("th-TH", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const parseDate = parseISO(dateStr);
+  const date = format(parseDate, "dd/MM/yyyy");
+
+  return date;
 }
 
-export default function ConfirmationPage({ searchParams }: Props) {
-  const {
-    code = "BK-XXXX",
-    checkIn,
-    checkOut,
-    nights = "1",
-    guests = "1",
-    total = "0",
-    roomName = "ห้องพัก",
-  } = searchParams;
+export default async function ConfirmationPage({ params }: Props) {
+  const { id } = await params;
+  const cookieStore = await cookies();
+
+  const cookieHeader = await cookieStore.toString();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+
+  const booking = await res.json();
 
   const details = [
     {
       icon: <Calendar className="w-4 h-4" />,
       label: "Check-in",
-      value: formatDate(checkIn),
+      value: formatDate(booking.checkInDate),
     },
     {
       icon: <Calendar className="w-4 h-4" />,
       label: "Check-out",
-      value: formatDate(checkOut),
+      value: formatDate(booking.checkOutDate),
     },
     {
       icon: <Moon className="w-4 h-4" />,
       label: "จำนวนคืน",
-      value: `${nights} คืน`,
+      value: `${booking.nights} คืน`,
     },
     {
       icon: <Users className="w-4 h-4" />,
       label: "จำนวนผู้เข้าพัก",
-      value: `${guests} คน`,
+      value: `${booking.guestCount} คน`,
     },
   ];
 
@@ -93,7 +86,7 @@ export default function ConfirmationPage({ searchParams }: Props) {
                 Booking Code
               </p>
               <p className="text-white text-3xl font-bold tracking-widest font-mono">
-                {code}
+                {booking.code}
               </p>
             </div>
 
@@ -101,12 +94,14 @@ export default function ConfirmationPage({ searchParams }: Props) {
             <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
               <div>
                 <p className="text-xs text-stone-500 mb-0.5">ห้องพัก</p>
-                <p className="font-semibold text-stone-900">{roomName}</p>
+                <p className="font-semibold text-stone-900">
+                  {booking.room.name}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-stone-500 mb-0.5">ยอดชำระ</p>
                 <p className="font-bold text-stone-900 text-lg">
-                  ฿{Number(total).toLocaleString()}
+                  ฿{Number(booking.totalAmount).toLocaleString()}
                 </p>
               </div>
             </div>
