@@ -2,98 +2,54 @@
 
 import Image from "next/image";
 import Link from "next/link";
-// import { loginUser } from "../actions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../context/AuthContext";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z.email("รูปแบบอีเมลไม่ถูกต้อง"),
+  email: z.string().email("รูปแบบอีเมลไม่ถูกต้อง"),
   password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
 });
 
-type LoginFromValue = z.infer<typeof loginSchema>;
+type LoginFormValue = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, isLoading, checkAuth } = useAuth();
+  const { checkAuth } = useAuth();
 
   const [serverError, setServerError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-  } = useForm<LoginFromValue>({
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValue>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
 
-  // const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setErrors({});
-  //   setGeneralError("");
-
-  //   const formData = new FormData(e.currentTarget);
-  //   const data = Object.fromEntries(formData.entries());
-
-  //   const validation = loginSchema.safeParse(data);
-
-  //   if (!validation.success) {
-  //     const fieldErrors = validation.error.flatten().fieldErrors;
-  //     setErrors(fieldErrors);
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await fetch("http://localhost:3001/auth/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(validation.data),
-  //       credentials: "include", // ส่งคุกกี้ไปด้วย
-  //     });
-
-  //     console.log("res", res);
-
-  //     if (!res.ok) {
-  //       throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-  //     }
-  //     router.push("/dashboard");
-  //   } catch (err: any) {
-  //     setGeneralError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const onSubmit = async (data: LoginFromValue) => {
+  const onSubmit = async (data: LoginFormValue) => {
     setServerError("");
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-        credentials: "include", // ส่งคุกกี้ไปด้วย
-      });
-
-      if (!res.ok) {
-        throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-      }
-
-      await checkAuth();
-      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         credentials: "include",
       });
 
+      if (!res.ok) throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+
+      await checkAuth();
+
+      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        credentials: "include",
+      });
       const user = await getMe.json();
 
       if (user.role === "ADMIN") {
@@ -107,109 +63,168 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      <div className="hidden lg:block lg:w-3/5 relative">
+    <div className="min-h-screen flex bg-stone-950">
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
         <Image
           src="https://cdn.pixabay.com/photo/2025/07/16/21/22/la-mure-village-9718387_1280.jpg"
-          alt="Lighthouse"
-          width={1280}
-          height={720}
-          className="absolute inset-0 h-full w-full object-cover"
+          alt="ที่พักสวยงาม"
+          fill
+          className="object-cover"
+          priority
         />
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/60 to-transparent" />
+
+        {/* Text บน image */}
+        {/* <div className="absolute bottom-12 left-10 right-10">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-px bg-amber-400" />
+            <span className="text-amber-400 text-xs tracking-widest uppercase">
+              ที่พักระดับพรีเมียม
+            </span>
+          </div>
+          <p className="text-white text-2xl font-semibold leading-snug">
+            "พักผ่อนอย่างมีสไตล์
+            <br />
+            ในทุกการเดินทาง"
+          </p>
+        </div> */}
       </div>
 
-      <div className="w-full lg:w-2/5 flex flex-col justify-between p-8 md:p-12">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 from-purple-400 to-yellow-400 rounded-full"></div>
-          <span className="font-bold text-gray-800">UI Unicorn</span>
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-20">
+        <div className="mb-12">
+          <Link href="/" className="flex items-center gap-2 group w-fit">
+            <div className="w-8 h-8 rounded-md bg-amber-500 flex items-center justify-center">
+              <span className="text-stone-950 font-bold text-sm">B</span>
+            </div>
+            <span className="text-white font-semibold text-lg tracking-wide">
+              Bookify
+            </span>
+          </Link>
         </div>
 
-        <div className="max-w-md w-full mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            Welcome Back
-          </h2>
-
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Email
-              </label>
-              <input
-                type="text"
-                {...register("email")}
-                placeholder="Email"
-                className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                {...register("password")}
-                placeholder="Password"
-                className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="rounded text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-gray-600">Remember me</span>
-              </label>
-              <a href="#" className="text-blue-600 hover:underline">
-                Forgot password?
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Signing in..." : "Sign in"}
-            </button>
-
-            {/* <button
-              type="button"
-              className="w-full py-3 bg-gray-800 text-white flex item-center justify-center gap-2 rounded-lg hover:bg-gray-900 transition-colors"
-            >
-              Or sign in with Google
-            </button> */}
-          </form>
-
-          <p className="text-center mt-8 text-sm text-gray-600">
-            Dont have an account?{" "}
-            <Link
-              href="/register"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Sign up now
-            </Link>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            ยินดีต้อนรับกลับ
+          </h1>
+          <p className="text-stone-400 text-sm">
+            เข้าสู่ระบบเพื่อดูและจัดการการจองของคุณ
           </p>
         </div>
 
-        <div className="flex justify-between items-center text-xs text-gray-400">
-          <div className="flex items-center gap-1">
-            <span>travel</span>
+        {serverError && (
+          <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl mb-6">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {serverError}
           </div>
-          <span>2026</span>
-        </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-stone-400 mb-1.5">
+              อีเมล
+            </label>
+            <input
+              type="text"
+              placeholder="example@email.com"
+              {...register("email")}
+              className={`w-full bg-stone-900 border rounded-xl px-4 py-3 text-white text-sm placeholder:text-stone-600 focus:outline-none focus:ring-2 transition-all ${
+                errors.email
+                  ? "border-red-500/50 focus:ring-red-500/30"
+                  : "border-stone-800 focus:ring-amber-500/30 focus:border-amber-500/50"
+              }`}
+            />
+            {errors.email && (
+              <p className="text-red-400 text-xs mt-1.5">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-sm font-medium text-stone-400">
+                รหัสผ่าน
+              </label>
+            </div>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="อย่างน้อย 8 ตัวอักษร"
+                {...register("password")}
+                className={`w-full bg-stone-900 border rounded-xl px-4 py-3 pr-11 text-white text-sm placeholder:text-stone-600 focus:outline-none focus:ring-2 transition-all ${
+                  errors.password
+                    ? "border-red-500/50 focus:ring-red-500/30"
+                    : "border-stone-800 focus:ring-amber-500/30 focus:border-amber-500/50"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-400 text-xs mt-1.5">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2.5 cursor-pointer group w-fit">
+              <div className="relative">
+                <input type="checkbox" className="sr-only peer" />
+                <div className="w-4 h-4 border border-stone-700 rounded bg-stone-900 peer-checked:bg-amber-500 peer-checked:border-amber-500 transition-all" />
+              </div>
+              <span className="text-sm text-stone-400 group-hover:text-stone-300 transition-colors">
+                จดจำฉันไว้
+              </span>
+            </label>
+
+            <a
+              href="#"
+              className="text-xs text-amber-500 hover:text-amber-400 transition-colors"
+            >
+              ลืมรหัสผ่าน?
+            </a>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 disabled:bg-stone-700 disabled:text-stone-500 text-stone-950 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 text-sm mt-2"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                กำลังเข้าสู่ระบบ...
+              </>
+            ) : (
+              "เข้าสู่ระบบ"
+            )}
+          </button>
+        </form>
+
+        <p className="text-center mt-8 text-sm text-stone-500">
+          ยังไม่มีบัญชี?{" "}
+          <Link
+            href="/register"
+            className="text-amber-500 hover:text-amber-400 font-medium transition-colors"
+          >
+            สมัครสมาชิกเลย
+          </Link>
+        </p>
+
+        <p className="text-center text-xs text-stone-700 mt-12">
+          © 2026 Bookify · ระบบจองที่พักออนไลน์
+        </p>
       </div>
     </div>
   );
