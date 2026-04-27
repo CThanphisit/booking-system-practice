@@ -40,15 +40,6 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // ถ้าเป็น admin ก็ต้องไปหน้า admin
-  // if (role === "ADMIN") {
-  //   return NextResponse.redirect(
-  //     new URL("/admin/dashboard_admin", request.url),
-  //   );
-  // } else {
-  //   return NextResponse.redirect(new URL("/dashboard", request.url));
-  // }
-
   return NextResponse.next();
 }
 

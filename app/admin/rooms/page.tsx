@@ -83,6 +83,7 @@ export default function RoomsPage() {
     setModalOpen(true);
   };
   const handleOpenEdit = (room: Room) => {
+    console.log("roomForEdit", room);
     setEditingRoom(room);
     setModalOpen(true);
   };

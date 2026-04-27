@@ -1,6 +1,7 @@
 "use client";
 
 import { User } from "@/types";
+import { usePathname, useRouter } from "next/navigation";
 import React, {
   createContext,
   useContext,
@@ -20,6 +21,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [user, setUser] = useState<User | null>(null);
   console.log("userContext", user);
   const [isLoading, setIsLoading] = useState<boolean>(true);

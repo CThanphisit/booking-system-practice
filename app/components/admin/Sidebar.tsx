@@ -15,6 +15,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { User } from "@/types";
 
 type MenuItem = {
   label: string;
@@ -38,20 +39,13 @@ const insightsMenu: MenuItem[] = [
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
 export default function Sidebar() {
   const pathname = usePathname();
 
   const [user, setUser] = useState<User | null>(null);
 
   const handleLogout = async () => {
-    await fetch("http://localhost:3001/auth/logout", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -61,12 +55,10 @@ export default function Sidebar() {
 
   useEffect(() => {
     const getMe = async () => {
-      const res = await fetch("http://localhost:3001/auth/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
-
-      console.log("datagetMe", res);
 
       const data = await res.json();
 
@@ -133,7 +125,7 @@ export default function Sidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">
-              {user?.name}
+              {user?.first_name} {user?.last_name}
             </p>
             <p className="text-xs text-gray-500">Super Admin</p>
           </div>

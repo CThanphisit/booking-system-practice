@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { cookies } from "next/headers";
+import { th } from "date-fns/locale";
 
 type Props = {
   params: { id: string };
@@ -18,7 +19,7 @@ type Props = {
 function formatDate(dateStr?: string) {
   if (!dateStr) return "-";
   const parseDate = parseISO(dateStr);
-  const date = format(parseDate, "dd/MM/yyyy");
+  const date = format(parseDate, "d MMM yyyy", { locale: th });
 
   return date;
 }

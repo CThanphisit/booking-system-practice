@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { X, Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { X, Plus, Trash2, Upload, Star, Loader2 } from "lucide-react";
 import { Room, RoomTypeName, RoomStatus } from "@/types";
 import z from "zod";
 import { useForm } from "react-hook-form";
@@ -48,7 +48,197 @@ const defaultAmenities = [
   "Bunk Bed",
 ];
 
+// ─── Image Manager ────────────────────────────────────────────────────────────
+function ImageManager({
+  images,
+  onChange,
+}: {
+  images: string[];
+  onChange: (images: string[]) => void;
+}) {
+  console.log("images", images);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  // ตรวจว่า URL เป็น path local หรือ external
+  const resolveUrl = (url: string) => url;
+
+  const handleUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadError("");
+
+    const validFiles = Array.from(files).filter((f) => {
+      if (!f.type.startsWith("image/")) {
+        setUploadError("รับเฉพาะไฟล์รูปภาพ");
+        return false;
+      }
+      if (f.size > 5 * 1024 * 1024) {
+        setUploadError("ขนาดไฟล์เกิน 5MB");
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+    setUploading(true);
+
+    try {
+      const uploaded: string[] = [];
+      for (const file of validFiles) {
+        const formData = new FormData();
+        formData.append("image", file);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/room/upload-image`,
+          { method: "POST", credentials: "include", body: formData },
+        );
+        if (!res.ok) throw new Error("Upload ไม่สำเร็จ");
+        const data = await res.json();
+        uploaded.push(data.url);
+      }
+      onChange([...images, ...uploaded]);
+    } catch (err: any) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  const handleDelete = (index: number) => {
+    onChange(images.filter((_, i) => i !== index));
+  };
+
+  // ย้ายรูปที่ index ขึ้นไปเป็นรูปแรก (รูปหลัก)
+  const handleSetMain = (index: number) => {
+    const next = [...images];
+    const [picked] = next.splice(index, 1);
+    onChange([picked, ...next]);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <label className="block text-sm text-gray-700">
+          รูปภาพห้อง
+          <span className="text-gray-400 font-normal ml-1">
+            ({images.length} รูป)
+          </span>
+        </label>
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors disabled:opacity-50"
+        >
+          {uploading ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <Upload className="w-3.5 h-3.5" />
+          )}
+          {uploading ? "กำลัง upload..." : "อัพโหลดรูป"}
+        </button>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => handleUpload(e.target.files)}
+        />
+      </div>
+
+      {/* รูปภาพที่มีอยู่ */}
+      {images.length > 0 ? (
+        <div className="grid grid-cols-3 gap-2">
+          {images.map((url, i) => (
+            <div
+              key={`${url}-${i}`}
+              className="relative group aspect-video rounded-lg overflow-hidden border bg-gray-50"
+            >
+              <img
+                src={resolveUrl(url)}
+                alt={`รูป ${i + 1}`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "https://placehold.co/200x120/f3f4f6/9ca3af?text=Error";
+                }}
+              />
+
+              {/* badge รูปหลัก */}
+              {i === 0 && (
+                <span className="absolute top-1 left-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                  หลัก
+                </span>
+              )}
+
+              {/* Overlay actions */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                {/* ตั้งเป็นรูปหลัก */}
+                {i !== 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleSetMain(i)}
+                    title="ตั้งเป็นรูปหลัก"
+                    className="w-7 h-7 bg-amber-400 hover:bg-amber-500 rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Star className="w-3.5 h-3.5 text-white" />
+                  </button>
+                )}
+
+                {/* ลบ */}
+                <button
+                  type="button"
+                  onClick={() => handleDelete(i)}
+                  title="ลบรูป"
+                  className="w-7 h-7 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-white" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* ช่องเพิ่มรูปใน grid */}
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="aspect-video rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-400 flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-indigo-500 transition-colors disabled:opacity-50"
+          >
+            <Upload className="w-4 h-4" />
+            <span className="text-xs">เพิ่มรูป</span>
+          </button>
+        </div>
+      ) : (
+        /* Dropzone เมื่อยังไม่มีรูป */
+        <div
+          onClick={() => inputRef.current?.click()}
+          className="border-2 border-dashed border-gray-300 hover:border-indigo-400 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer transition-colors group"
+        >
+          <Upload className="w-8 h-8 text-gray-300 group-hover:text-indigo-400 transition-colors" />
+          <p className="text-sm text-gray-500">คลิกเพื่ออัพโหลดรูปภาพ</p>
+          <p className="text-xs text-gray-400">
+            PNG, JPG · ไม่เกิน 5MB ต่อไฟล์
+          </p>
+        </div>
+      )}
+
+      {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+
+      {images.length > 0 && (
+        <p className="text-xs text-gray-400">
+          hover ที่รูปเพื่อลบ · กด ★ เพื่อตั้งเป็นรูปหลัก
+        </p>
+      )}
+    </div>
+  );
+}
+
+// Main Component --------------------------------------------------------------
 export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
+  console.log("roomFormModal", room);
   const {
     register,
     handleSubmit,
@@ -59,19 +249,18 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
   } = useForm<RoomFormValues>({
     resolver: zodResolver(roomSchema),
     defaultValues: {
-      roomNumber: "",
-      floor: 1,
-      type: "Standard",
-      maxOccupancy: 2,
-      pricePerNight: 1200,
-      status: "AVAILABLE",
-      // amenities: ["Wi-Fi", "Air Conditioning"],
-      description: "",
-      images: [],
+      roomNumber: room?.roomNumber || "",
+      floor: room?.floor || 1,
+      type: room?.type || "Standard",
+      maxOccupancy: room?.maxOccupancy || 2,
+      pricePerNight: room?.pricePerNight || 1200,
+      status: room?.status || "AVAILABLE",
+      description: room?.description || "",
+      images: room?.images || [],
     },
   });
 
-  // const selectedAmenities = watch("amenities");
+  const images = watch("images");
 
   // Reset form เมื่อ room หรือสถานะ open เปลี่ยนแปลง
   useEffect(() => {
@@ -86,7 +275,7 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
           status: room.status,
           // amenities: room.amenities,
           description: room.description,
-          images: [],
+          images: room.images ?? [],
         });
       } else {
         reset({
@@ -111,14 +300,6 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
     onSave(data);
     onClose();
   };
-
-  // const toggleAmenity = (item: string) => {
-  //   const current = selectedAmenities || [];
-  //   const next = current.includes(item)
-  //     ? current.filter((a) => a !== item)
-  //     : [...current, item];
-  //   setValue("amenities", next);
-  // };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -232,29 +413,6 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
             </div>
           </div>
 
-          {/* Amenities */}
-          {/* <div>
-            <label className="block text-sm text-gray-700 mb-2">
-              สิ่งอำนวยความสะดวก
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {defaultAmenities.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => toggleAmenity(item)}
-                  className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
-                    selectedAmenities?.includes(item)
-                      ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                      : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div> */}
-
           {/* Description */}
           <div>
             <label className="block text-sm text-gray-700 mb-1.5">
@@ -274,6 +432,12 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
               </p>
             )}
           </div>
+
+          {/* Image Manager */}
+          <ImageManager
+            images={images}
+            onChange={(imgs) => setValue("images", imgs, { shouldDirty: true })}
+          />
         </div>
 
         {/* Footer */}

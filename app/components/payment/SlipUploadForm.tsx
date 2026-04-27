@@ -1,9 +1,9 @@
-// components/user/payment/SlipUploadForm.tsx
 "use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, X, CheckCircle, Loader2, ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 type Props = {
   bookingId: string;

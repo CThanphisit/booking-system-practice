@@ -41,6 +41,8 @@ export default function BookingsPage() {
       credentials: "include",
     });
 
+    console.log("res", res);
+
     if (res.ok) {
       const data = await res.json();
       console.log("dataResBooking", data);
@@ -101,7 +103,7 @@ export default function BookingsPage() {
   const totalRevenue = useMemo(
     () =>
       bookings
-        // .filter((b) => b.paymentStatus === "PAID")
+        .filter((b) => b.payment?.status === "APPROVED")
         .reduce((s, b) => s + +b.totalAmount, 0),
     [bookings],
   );
@@ -168,8 +170,7 @@ export default function BookingsPage() {
   ) => {
     try {
       const res = await fetch(
-        `
-      ${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+        `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
         {
           method: "PATCH",
           headers: {
@@ -183,6 +184,12 @@ export default function BookingsPage() {
           credentials: "include",
         },
       );
+
+      if (res.ok) {
+        await getListBookings();
+      } else {
+        console.log("RejectError", res);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -354,7 +361,7 @@ export default function BookingsPage() {
                       <td className="px-5 py-3">
                         <div>
                           <p className="text-gray-900 font-medium">
-                            {booking.user.first_name}
+                            {booking.user.first_name} {booking.user.last_name}
                           </p>
                           <p className="text-xs text-gray-400">
                             {booking.user.email}

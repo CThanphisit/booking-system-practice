@@ -18,7 +18,9 @@ export default function SearchBar({ onSearch, initialValues }: Props) {
   const today = new Date().toISOString().split("T")[0];
   // checkOut ต้องหลัง checkIn อย่างน้อย 1 วัน
   const minCheckOut = checkIn
-    ? new Date(new Date(checkIn).getTime() + 86400000).toISOString().split("T")[0]
+    ? new Date(new Date(checkIn).getTime() + 86400000)
+        .toISOString()
+        .split("T")[0]
     : today;
 
   const handleSearch = () => {
@@ -28,12 +30,13 @@ export default function SearchBar({ onSearch, initialValues }: Props) {
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-2">
       <div className="flex flex-col sm:flex-row gap-2">
-
         {/* Check-in */}
         <div className="flex-1 flex items-center gap-3 bg-white/10 hover:bg-white/15 rounded-xl px-4 py-3 transition-colors">
           <Calendar className="w-4 h-4 text-amber-400 shrink-0" />
           <div className="flex-1 min-w-0">
-            <label className="block text-white/60 text-xs mb-0.5">Check-in</label>
+            <label className="block text-white/60 text-xs mb-0.5">
+              Check-in
+            </label>
             <input
               type="date"
               value={checkIn}
@@ -53,7 +56,9 @@ export default function SearchBar({ onSearch, initialValues }: Props) {
         <div className="flex-1 flex items-center gap-3 bg-white/10 hover:bg-white/15 rounded-xl px-4 py-3 transition-colors">
           <Calendar className="w-4 h-4 text-amber-400 shrink-0" />
           <div className="flex-1 min-w-0">
-            <label className="block text-white/60 text-xs mb-0.5">Check-out</label>
+            <label className="block text-white/60 text-xs mb-0.5">
+              Check-out
+            </label>
             <input
               type="date"
               value={checkOut}
@@ -70,7 +75,9 @@ export default function SearchBar({ onSearch, initialValues }: Props) {
         <div className="flex items-center gap-3 bg-white/10 hover:bg-white/15 rounded-xl px-4 py-3 transition-colors">
           <Users className="w-4 h-4 text-amber-400 shrink-0" />
           <div>
-            <label className="block text-white/60 text-xs mb-0.5">จำนวนคน</label>
+            <label className="block text-white/60 text-xs mb-0.5">
+              จำนวนคน
+            </label>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setGuests((g) => Math.max(1, g - 1))}
@@ -78,7 +85,9 @@ export default function SearchBar({ onSearch, initialValues }: Props) {
               >
                 −
               </button>
-              <span className="text-white text-sm w-4 text-center font-medium">{guests}</span>
+              <span className="text-white text-sm w-4 text-center font-medium">
+                {guests}
+              </span>
               <button
                 onClick={() => setGuests((g) => Math.min(10, g + 1))}
                 className="w-6 h-6 rounded-full border border-white/30 text-white flex items-center justify-center hover:bg-white/20 text-sm leading-none"

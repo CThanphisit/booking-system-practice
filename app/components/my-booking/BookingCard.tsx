@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { MyBooking } from "@/types";
 import BookingStatusBadge from "./BookingStatusBadge";
+import { format, parseISO } from "date-fns";
+import { th } from "date-fns/locale";
+import Image from "next/image";
 
 type Props = {
   booking: MyBooking;
@@ -27,11 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("th-TH", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return format(parseISO(d), "d MMM yyyy", { locale: th });
 }
 
 export default function BookingCard({ booking, onCancel, onCopyCode }: Props) {
@@ -55,7 +54,20 @@ export default function BookingCard({ booking, onCancel, onCopyCode }: Props) {
             TYPE_COLORS[booking.room.type]
           } flex items-center justify-center`}
         >
-          <BedDouble className="w-10 h-10 text-white/50" />
+          {/* Room image */}
+          {booking.room.images[0] ? (
+            <Image
+              src={booking.room.images[0]}
+              alt={`ห้อง ${booking.room.roomNumber}`}
+              className="w-full h-full object-cover"
+              width={200}
+              height={200}
+            />
+          ) : (
+            <div className="w-full h-full bg-stone-200 flex items-center justify-center">
+              <BedDouble className="w-10 h-10 text-stone-400" />
+            </div>
+          )}
 
           {/* Active indicator */}
           {isActive && (
@@ -75,7 +87,10 @@ export default function BookingCard({ booking, onCancel, onCopyCode }: Props) {
                 <h3 className="font-semibold text-stone-900">
                   ห้อง {booking.room.roomNumber} · {booking.room.type}
                 </h3>
-                <BookingStatusBadge status={booking.status} />
+                <BookingStatusBadge
+                  status={booking.status}
+                  paymentStatus={booking.payment?.status}
+                />
               </div>
               {/* Booking code */}
               <button
@@ -112,13 +127,13 @@ export default function BookingCard({ booking, onCancel, onCopyCode }: Props) {
           {/* Note */}
           {booking.note && (
             <p className="text-xs text-stone-400 bg-stone-50 rounded-lg px-3 py-2 mb-4 italic">
-              "{booking.note}"
+              &quot;{booking.note}&quot;
             </p>
           )}
 
           {/* Actions */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* <Link
+            <Link
               href={`/my-bookings/${booking.id}`}
               className="flex items-center gap-1.5 text-sm text-stone-600 hover:text-stone-900 border border-stone-200 hover:border-stone-300 px-3.5 py-1.5 rounded-lg transition-colors"
             >
@@ -126,7 +141,7 @@ export default function BookingCard({ booking, onCancel, onCopyCode }: Props) {
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
 
-            {canReview && (
+            {/* {canReview && (
               <Link
                 href={`/my-bookings/${booking.id}/review`}
                 className="flex items-center gap-1.5 text-sm text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-100 px-3.5 py-1.5 rounded-lg transition-colors"

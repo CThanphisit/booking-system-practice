@@ -17,6 +17,7 @@ import PaymentBadge from "./PaymentBadge";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import { useAuth } from "@/app/context/AuthContext";
+import { th } from "date-fns/locale";
 
 type Props = {
   booking: Booking | null;
@@ -82,8 +83,7 @@ export default function BookingDetailModal({
   };
 
   const formatDate = (date: string) => {
-    const parseDate = parseISO(date);
-    return format(parseDate, "dd/MM/yyyy");
+    return format(parseISO(date), "d MMM yyyy", { locale: th });
   };
 
   return (
@@ -124,7 +124,7 @@ export default function BookingDetailModal({
             </p>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <User className="w-4 h-4 text-gray-400 shrink-0" />
-              {booking.user.first_name}
+              {booking.user.first_name} {booking.user.last_name}
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-700">
               <Mail className="w-4 h-4 text-gray-400 shrink-0" />
@@ -189,14 +189,16 @@ export default function BookingDetailModal({
 
             {/* รูปสลิป */}
             <img
-              src={`${process.env.NEXT_PUBLIC_API_URL}${booking.payment.slipUrl}`}
+              src={`${booking.payment.slipUrl}`}
               alt="slip"
               className="w-full max-h-64 object-contain rounded border mb-3"
             />
 
             <p className="text-xs text-gray-500 mb-3">
               ยอด ฿{booking.payment.amount.toLocaleString()} · upload เมื่อ{" "}
-              {formatDate(booking.payment.createdAt)}
+              {format(booking.payment.updatedAt, "d MMM yyyy HH:mm", {
+                locale: th,
+              })}
             </p>
 
             {/* ✅ ปุ่ม Approve/Reject — เปิดแล้ว */}

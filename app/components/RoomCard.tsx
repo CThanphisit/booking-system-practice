@@ -10,6 +10,7 @@ import {
   ChefHat,
 } from "lucide-react";
 import { RoomValues } from "@/types";
+import Image from "next/image";
 
 // Map amenity name → icon
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
@@ -37,6 +38,8 @@ export default function RoomCard({ room, nights }: Props) {
   const isAvailable = room.status === "AVAILABLE";
   const totalPrice = nights ? room.pricePerNight * nights : null;
 
+  console.log("room", room);
+
   // Placeholder gradient ถ้าไม่มีรูปจริง
   const gradients: Record<string, string> = {
     Standard: "from-stone-200 to-stone-300",
@@ -49,11 +52,21 @@ export default function RoomCard({ room, nights }: Props) {
     <article className="group bg-white rounded-2xl overflow-hidden border border-stone-200 hover:border-stone-300 hover:shadow-lg transition-all duration-300">
       {/* Image */}
       <div className="relative overflow-hidden h-52">
-        <div
-          className={`w-full h-full bg-gradient-to-br ${gradients[room.type]} flex items-center justify-center transition-transform duration-500 group-hover:scale-105`}
-        >
-          <BedDouble className="w-12 h-12 text-white/60" />
-        </div>
+        {room.images[0] ? (
+          <Image
+            src={room.images[0]}
+            alt={`ห้อง ${room.roomNumber}`}
+            fill
+            className="object-cover"
+            // sizes="400px"
+          />
+        ) : (
+          <div
+            className={`w-full h-full bg-gradient-to-br ${gradients[room.type]} flex items-center justify-center transition-transform duration-500 group-hover:scale-105`}
+          >
+            <BedDouble className="w-12 h-12 text-white/60" />
+          </div>
+        )}
 
         {/* Status overlay */}
         {!isAvailable && (
