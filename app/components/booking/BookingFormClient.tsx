@@ -12,7 +12,7 @@ import GuestForm from "./GuestForm";
 import PaymentSection from "./PaymentSection";
 import { useAuth } from "@/app/context/AuthContext";
 
-// ─── Zod schema ────────────────────────────────────────────────────────────────
+// Zod schema
 const bookingSchema = z.object({
   firstName: z.string().min(1, "กรุณากรอกชื่อ"),
   lastName: z.string().min(1, "กรุณากรอกนามสกุล"),
@@ -20,22 +20,14 @@ const bookingSchema = z.object({
   phone: z.string().min(9, "เบอร์โทรศัพท์ไม่ถูกต้อง"),
   note: z.string().optional(),
   paymentMethod: z.enum(["CREDIT_CARD", "BANK_TRANSFER", "PROMPTPAY", "CASH"], {
-    errorMap: () => ({ message: "กรุณาเลือกวิธีชำระเงิน" }),
+    message: "กรุณาเลือกวิธีชำระเงิน",
   }),
   acceptPolicy: z.literal(true, {
-    errorMap: () => ({ message: "กรุณายอมรับเงื่อนไข" }),
+    message: "กรุณายอมรับเงื่อนไข",
   }),
 });
 
 export type BookingFormValues = z.infer<typeof bookingSchema>;
-
-// สมมติว่า logged-in user มีข้อมูลนี้ — เปลี่ยนเป็น auth context จริง
-const MOCK_USER = {
-  firstName: "สมชาย",
-  lastName: "ใจดี",
-  email: "somchai@email.com",
-  phone: "081-234-5678",
-};
 
 type Props = {
   room: Room;
@@ -82,7 +74,7 @@ export default function BookingFormClient({
 
   const totalAmount = room.pricePerNight * nights;
 
-  // ── Step 0 → 1: validate guest fields ก่อน ──────────────────────────────
+  // ── Step 0 → 1: validate guest fields ก่อน
   const handleNextStep = async () => {
     const valid = await trigger(["firstName", "lastName", "email", "phone"]);
     if (valid) setStep(1);
@@ -309,7 +301,7 @@ export default function BookingFormClient({
               </div>
             </div>
 
-            {/* ── Right: Summary ──────────────────────────────────────── */}
+            {/* Right: Summary */}
             <div className="lg:col-span-1">
               <BookingSummaryCard
                 room={room}

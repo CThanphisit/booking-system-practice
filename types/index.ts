@@ -42,8 +42,6 @@ export interface RoomValues {
   createdAt: string;
 }
 
-// ─── Booking Types ─────────────────────────────────────────────────────────────
-
 export type BookingStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -51,7 +49,12 @@ export type BookingStatus =
   | "COMPLETED"
   | "CANCELLED";
 
-export type PaymentStatus = "WAITING_REVIEW" | "APPROVED" | "REJECTED";
+export type PaymentStatus =
+  | "WAITING_REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "REFUND_PENDING"
+  | "REFUNDED";
 
 export interface Booking {
   id: string;

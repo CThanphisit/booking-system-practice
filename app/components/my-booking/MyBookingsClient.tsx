@@ -5,7 +5,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { MyBooking, BookingStatus } from "@/types";
 import BookingCard from "./BookingCard";
 import BookingStats from "./BookingStats";
-import CancelModal from "./CancelModal";
+import CancelModal, { CancelPayload } from "./CancelModal";
 
 type Tab = "ALL" | BookingStatus;
 
@@ -58,16 +58,22 @@ export default function MyBookingsClient({ initialBookings }: Props) {
     showToast(`คัดลอก ${code} แล้ว`);
   };
 
-  const handleCancel = async (id: string, _reason: string) => {
+  const handleCancel = async (
+    id: string,
+    payload: CancelPayload,
+    // data: any,
+  ) => {
+    console.log("id", id);
+    console.log("dataSubmit", payload);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/cancel/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}/cancel`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: "CANCELLED" }),
+          body: JSON.stringify(payload),
           credentials: "include",
         },
       );

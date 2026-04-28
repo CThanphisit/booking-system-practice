@@ -201,7 +201,7 @@ export default function BookingDetailModal({
               })}
             </p>
 
-            {/* ✅ ปุ่ม Approve/Reject — เปิดแล้ว */}
+            {/* ปุ่ม Approve/Reject */}
             {booking.payment.status === "WAITING_REVIEW" && (
               <div className="space-y-2">
                 {!showRejectForm ? (

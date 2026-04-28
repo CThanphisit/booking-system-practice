@@ -7,7 +7,6 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// --- Validation Schema ---
 const roomSchema = z.object({
   roomNumber: z.string().min(1, "กรุณาระบุหมายเลขห้อง"),
   type: z.string(),

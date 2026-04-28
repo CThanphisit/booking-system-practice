@@ -13,7 +13,7 @@ type Props = {
   params: { id: string };
 };
 
-// ── Server Component — ดึงข้อมูลห้อง ────────────────────────────────────────
+// ── Server Component — ดึงข้อมูลห้อง
 export default async function RoomDetailPage({ params }: Props) {
   const { id } = await params;
 

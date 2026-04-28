@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../context/AuthContext";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("รูปแบบอีเมลไม่ถูกต้อง"),
@@ -20,6 +21,9 @@ type LoginFormValue = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const { checkAuth } = useAuth();
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +59,9 @@ export default function LoginPage() {
       if (user.role === "ADMIN") {
         router.push("/admin/dashboard_admin");
       } else {
-        router.push("/");
+        const destination = callbackUrl || "/";
+        router.push(destination);
+        router.refresh();
       }
     } catch (err: any) {
       setServerError(err.message);

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import qrImage from "@/public/qrcode-demo.png";
+import PaymentCountdown from "@/app/components/payment/PaymentCountdown";
 
 type Props = {
   params: { id: string };
@@ -81,6 +82,7 @@ export default async function PaymentPage({ params }: Props) {
           {/* Upload Section */}
           <div>
             <h2 className="font-semibold mb-3">อัปโหลดสลิป</h2>
+            <PaymentCountdown deadline={booking.paymentDeadline} />
             <SlipUploadForm
               bookingId={id}
               totalAmount={Number(booking.totalAmount)}

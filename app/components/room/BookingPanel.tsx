@@ -6,6 +6,7 @@ import { Users, AlertCircle, Moon } from "lucide-react";
 import { differenceInCalendarDays } from "date-fns";
 import { Room } from "@/types";
 import { RoomDateRangePicker } from "./RoomDateRangePicker";
+import { useAuth } from "@/app/context/AuthContext";
 
 type Props = {
   room: Room;
@@ -14,6 +15,7 @@ type Props = {
 
 export default function BookingPanel({ room, bookedDates = [] }: Props) {
   const router = useRouter();
+  const { user } = useAuth();
 
   const [checkIn, setCheckIn] = useState<Date | undefined>();
   const [checkOut, setCheckOut] = useState<Date | undefined>();
@@ -31,19 +33,24 @@ export default function BookingPanel({ room, bookedDates = [] }: Props) {
 
   const handleBook = () => {
     setError("");
-    if (!checkIn || !checkOut)
-      return setError("กรุณาเลือกวัน Check-in และ Check-out");
-    if (nights <= 0) return setError("กรุณาเลือกวันให้ถูกต้อง");
-    if (guests > room.maxOccupancy) {
-      return setError(`ห้องนี้รองรับสูงสุด ${room.maxOccupancy} คน`);
-    }
+    console.log("user", !user?.id);
+    if (!user?.id) {
+      router.push(`/login?callbackUrl=/rooms/${room.id}`);
+    } else {
+      if (!checkIn || !checkOut)
+        return setError("กรุณาเลือกวัน Check-in และ Check-out");
+      if (nights <= 0) return setError("กรุณาเลือกวันให้ถูกต้อง");
+      if (guests > room.maxOccupancy) {
+        return setError(`ห้องนี้รองรับสูงสุด ${room.maxOccupancy} คน`);
+      }
 
-    const params = new URLSearchParams({
-      checkIn: checkIn.toISOString(),
-      checkOut: checkOut.toISOString(),
-      guests: String(guests),
-    });
-    router.push(`/booking/${room.id}?${params.toString()}`);
+      const params = new URLSearchParams({
+        checkIn: checkIn.toISOString(),
+        checkOut: checkOut.toISOString(),
+        guests: String(guests),
+      });
+      router.push(`/booking/${room.id}?${params.toString()}`);
+    }
   };
 
   return (
@@ -132,7 +139,6 @@ export default function BookingPanel({ room, bookedDates = [] }: Props) {
         </div>
       )}
 
-      {/* CTA */}
       <button
         onClick={handleBook}
         disabled={!isAvailable}

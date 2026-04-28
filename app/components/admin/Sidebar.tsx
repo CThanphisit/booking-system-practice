@@ -28,7 +28,7 @@ const mainMenu: MenuItem[] = [
   { label: "Dashboard", href: "/admin/dashboard_admin", icon: LayoutDashboard },
   { label: "Rooms", href: "/admin/rooms", icon: Home },
   { label: "Bookings", href: "/admin/bookings", icon: Calendar, badge: 8 },
-  { label: "Customers", href: "/admin/customers", icon: Users },
+  { label: "Users", href: "/admin/users", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   // { label: "Reviews", href: "/admin/reviews", icon: Star },
 ];

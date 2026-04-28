@@ -32,7 +32,6 @@ export function RoomDateRangePicker({
     onChange?.(range);
   };
 
-  // console.log("bookedDatesCa", bookedDates);
   return (
     <div className="grid gap-2">
       <Popover>

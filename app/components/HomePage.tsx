@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { mockRooms } from "@/lib/mock-rooms";
-import { RoomTypeName, RoomValues, SearchParams } from "@/types";
+import { Room, RoomTypeName, RoomValues, SearchParams } from "@/types";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
@@ -12,27 +12,36 @@ import RoomCard from "../components/RoomCard";
 type RoomStatus = "AVAILABLE" | "MAINTENANCE" | "INACTIVE";
 
 export default function HomePage() {
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useState<Partial<SearchParams>>({});
   const [selectedType, setSelectedType] = useState<RoomTypeName | "ALL">("ALL");
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(99999);
-  const [roomsData, setRoomsData] = useState<RoomValues[]>([]);
-  console.log("roomsData", roomsData);
+  console.log("rooms", rooms);
 
-  const getListRooms = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/room`, {
-      method: "GET",
-      // credentials: "include",
-    });
+  const fetchRooms = async (params: Partial<SearchParams>) => {
+    setLoading(true);
+    try {
+      const query = new URLSearchParams();
+      if (params.checkIn) query.set("checkIn", params.checkIn);
+      if (params.checkOut) query.set("checkOut", params.checkOut);
+      if (params.guests) query.set("guests", String(params.guests));
 
-    if (res.ok) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/room?${query.toString()}`,
+        { cache: "no-store" },
+      );
       const data = await res.json();
-      setRoomsData(data);
+      setRooms(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
-
   useEffect(() => {
     const load = async () => {
-      await getListRooms();
+      await fetchRooms({});
     };
     load();
   }, []);
@@ -51,7 +60,7 @@ export default function HomePage() {
 
   const handleSearch = (params: Partial<SearchParams>) => {
     setSearchParams(params);
-    // scroll ลงไปที่รายการห้อง
+    fetchRooms(params);
     document
       .getElementById("rooms-section")
       ?.scrollIntoView({ behavior: "smooth" });
@@ -59,14 +68,12 @@ export default function HomePage() {
 
   // Filter ห้องพัก
   const filteredRooms = useMemo(() => {
-    return roomsData.filter((room) => {
+    return rooms.filter((room) => {
       const matchType = selectedType === "ALL" || room.type === selectedType;
-      const matchPrice = room.pricePerNight <= selectedMaxPrice;
-      const matchGuests =
-        !searchParams.guests || room.maxOccupancy >= searchParams.guests;
-      return matchType && matchPrice && matchGuests;
+      const matchPrice = Number(room.pricePerNight) <= selectedMaxPrice;
+      return matchType && matchPrice;
     });
-  }, [selectedType, selectedMaxPrice, searchParams.guests, roomsData]);
+  }, [rooms, selectedType, selectedMaxPrice]);
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -104,7 +111,7 @@ export default function HomePage() {
           <RoomFilters
             selectedType={selectedType}
             selectedMaxPrice={selectedMaxPrice}
-            totalCount={roomsData.length}
+            totalCount={rooms.length}
             filteredCount={filteredRooms.length}
             onTypeChange={setSelectedType}
             onPriceChange={setSelectedMaxPrice}
@@ -112,7 +119,12 @@ export default function HomePage() {
         </div>
 
         {/* Room Grid */}
-        {filteredRooms.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-stone-500 text-sm">กำลังค้นหาห้องว่าง...</p>
+          </div>
+        ) : filteredRooms.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRooms.map((room) => (
               <RoomCard
