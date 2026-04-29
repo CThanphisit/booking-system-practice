@@ -27,10 +27,10 @@ export default async function RoomDetailPage({ params }: Props) {
   // if (!data) notFound();
 
   const [roomRes, bookedRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}`, {
       cache: "no-store",
     }),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/room/${id}/booked-dates`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}/booked-dates`, {
       cache: "no-store",
     }),
   ]);

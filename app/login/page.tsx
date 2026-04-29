@@ -40,7 +40,7 @@ function LoginForm() {
   const onSubmit = async (data: LoginFormValue) => {
     setServerError("");
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -51,7 +51,7 @@ function LoginForm() {
 
       await checkAuth();
 
-      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
         credentials: "include",
       });
       const user = await getMe.json();

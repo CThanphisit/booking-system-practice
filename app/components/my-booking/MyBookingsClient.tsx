@@ -65,7 +65,7 @@ export default function MyBookingsClient({ initialBookings }: Props) {
   ) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}/cancel`,
+        `${process.env.NEXT_PUBLIC_API_URL}booking/${id}/cancel`,
         {
           method: "PATCH",
           headers: {

@@ -54,7 +54,7 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
       formData.append("bookingId", bookingId);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payment/upload-slip`,
+        `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
         {
           method: "POST",
           credentials: "include", // ส่ง cookie ไปด้วย

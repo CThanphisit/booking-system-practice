@@ -26,7 +26,7 @@ export default function HomePage() {
       if (params.guests) query.set("guests", String(params.guests));
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/room?${query.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL}room?${query.toString()}`,
         { cache: "no-store" },
       );
       const data = await res.json();

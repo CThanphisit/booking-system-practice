@@ -18,7 +18,7 @@ async function getBooking(id: string): Promise<MyBooking> {
   const cookieStore = await cookies();
   const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });

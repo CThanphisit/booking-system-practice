@@ -11,7 +11,7 @@ async function getPayments() {
     .join("; ");
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/all`,
+    `${process.env.NEXT_PUBLIC_API_URL}payment/admin/all`,
     {
       headers: { cookie: cookieHeader },
       cache: "no-store",

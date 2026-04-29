@@ -46,7 +46,7 @@ export default function BookingDetailActions({ booking }: Props) {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking/${booking.id}/cancel`,
+        `${process.env.NEXT_PUBLIC_API_URL}booking/${booking.id}/cancel`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

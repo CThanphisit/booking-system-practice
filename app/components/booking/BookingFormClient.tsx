@@ -113,7 +113,7 @@ export default function BookingFormClient({
         note: data.note,
       };
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -8,7 +8,7 @@ export default async function MyBookingsPage() {
   const cookieStore = await cookies();
   const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
     headers: {
       cookie: cookieHeader,
     },

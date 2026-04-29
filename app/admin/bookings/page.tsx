@@ -34,7 +34,7 @@ export default function BookingsPage() {
   const PER_PAGE = 5;
 
   const getListBookings = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
       method: "GET",
       credentials: "include",
     });
@@ -109,17 +109,14 @@ export default function BookingsPage() {
     //   prev.map((b) => (b.id === id ? { ...b, status } : b)),
     // );
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-        credentials: "include",
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ status }),
+      credentials: "include",
+    });
 
     if (res.ok) {
       await getListBookings();
@@ -137,7 +134,7 @@ export default function BookingsPage() {
     try {
       const res = await fetch(
         `
-      ${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+      ${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
         {
           method: "PATCH",
           headers: {
@@ -165,7 +162,7 @@ export default function BookingsPage() {
   ) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+        `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
         {
           method: "PATCH",
           headers: {

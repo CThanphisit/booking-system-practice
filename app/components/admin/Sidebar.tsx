@@ -45,7 +45,7 @@ export default function Sidebar() {
   const [user, setUser] = useState<User | null>(null);
 
   const handleLogout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -55,7 +55,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const getMe = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
         method: "GET",
         credentials: "include",
       });

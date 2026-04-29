@@ -28,7 +28,7 @@ export default async function AdminUsersPage() {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
   // const users = await getUsers();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}users`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });

@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/logout`, {
       method: "POST",
       credentials: "include",
     });

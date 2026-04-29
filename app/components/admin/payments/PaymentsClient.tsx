@@ -63,7 +63,7 @@ export default function PaymentsClient({ initialPayments }: Props) {
 
   const handleApprove = async (id: string) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
       {
         method: "PATCH",
         credentials: "include",
@@ -79,7 +79,7 @@ export default function PaymentsClient({ initialPayments }: Props) {
 
   const handleReject = async (id: string, note: string) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/review`,
+      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
       {
         method: "PATCH",
         credentials: "include",
@@ -94,7 +94,7 @@ export default function PaymentsClient({ initialPayments }: Props) {
 
   const handleConfirmRefund = async (id: string, note: string) => {
     await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/payment/admin/${id}/refund`,
+      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/refund`,
       {
         method: "PATCH",
         credentials: "include",
