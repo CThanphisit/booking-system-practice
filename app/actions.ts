@@ -10,7 +10,6 @@ export async function registerUser(data: {
   password: string;
   phoneNumber: string;
 }) {
-  console.log("forRegister", data);
   const rawFormData = {
     first_name: data.first_name,
     last_name: data.last_name,
@@ -26,8 +25,6 @@ export async function registerUser(data: {
     },
     body: JSON.stringify(rawFormData),
   });
-
-  console.log("resRegis", res);
 
   if (!res.ok) {
     // แทนที่จะ throw error ให้ return object กลับไปแสดงที่ UI

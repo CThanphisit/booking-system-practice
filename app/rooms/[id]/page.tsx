@@ -39,7 +39,6 @@ export default async function RoomDetailPage({ params }: Props) {
   if (!roomRes.ok) notFound();
 
   const room = await roomRes.json();
-  console.log("room", room);
   const bookedDateStrings: string[] = await bookedRes.json();
 
   const bookedDates = bookedDateStrings.map((d) => new Date(d + "T00:00:00"));

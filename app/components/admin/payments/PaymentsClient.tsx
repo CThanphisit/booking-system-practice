@@ -40,7 +40,6 @@ type Props = { initialPayments: FullPayment[] };
 export default function PaymentsClient({ initialPayments }: Props) {
   const router = useRouter();
   const [payments, setPayments] = useState<FullPayment[]>(initialPayments);
-  console.log("payments", payments);
   const [tab, setTab] = useState<Tab>("WAITING_REVIEW");
   const [search, setSearch] = useState("");
   const [reviewTarget, setReviewTarget] = useState<FullPayment | null>(null);
@@ -61,7 +60,6 @@ export default function PaymentsClient({ initialPayments }: Props) {
           p.booking.user.email.toLowerCase().includes(q),
       );
   }, [payments, tab, search]);
-  console.log("filtered", filtered);
 
   const handleApprove = async (id: string) => {
     const res = await fetch(

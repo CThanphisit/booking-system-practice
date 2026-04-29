@@ -23,7 +23,6 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function BookingDetailInfo({ booking }: Props) {
-  console.log("bookingDetail", booking);
   const pricePerNight = Number(booking.totalAmount) / booking.nights;
 
   return (

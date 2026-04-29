@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export default function DashboardPage() {
   useEffect(() => {
     const getMe = async () => {
-      const res = await fetch("http://localhost:3001/auth/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleLogout = async () => {
-    await fetch("http://localhost:3001/auth/logout", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });

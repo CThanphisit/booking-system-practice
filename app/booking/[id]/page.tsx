@@ -22,7 +22,6 @@ export default async function BookingFormPage({ params, searchParams }: Props) {
   );
 
   const data = await fetchData.json();
-  console.log("data", data);
   if (!data) notFound();
 
   // ถ้าห้องไม่ว่าง → redirect กลับ

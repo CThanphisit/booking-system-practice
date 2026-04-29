@@ -25,7 +25,6 @@ export function RoomDateRangePicker({
   bookedDates = [],
 }: Props) {
   const [date, setDate] = React.useState<DateRange | undefined>(value);
-  console.log("date", date);
 
   const handleSelect = (range: DateRange | undefined) => {
     setDate(range);

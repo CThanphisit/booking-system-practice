@@ -55,7 +55,6 @@ function ImageManager({
   images: string[];
   onChange: (images: string[]) => void;
 }) {
-  console.log("images", images);
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -237,7 +236,6 @@ function ImageManager({
 
 // Main Component --------------------------------------------------------------
 export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
-  console.log("roomFormModal", room);
   const {
     register,
     handleSubmit,
@@ -295,7 +293,6 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
   if (!open) return null;
 
   const onSubmit = (data: RoomFormValues) => {
-    console.log("dataModal", data);
     onSave(data);
     onClose();
   };

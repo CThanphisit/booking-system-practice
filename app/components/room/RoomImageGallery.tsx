@@ -29,8 +29,6 @@ export default function RoomImageGallery({ images, roomName }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  console.log("images", images);
-
   const hasImages = images.length > 0;
 
   const openLightbox = (index: number) => {

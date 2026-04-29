@@ -17,7 +17,6 @@ export default function HomePage() {
   const [searchParams, setSearchParams] = useState<Partial<SearchParams>>({});
   const [selectedType, setSelectedType] = useState<RoomTypeName | "ALL">("ALL");
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(99999);
-  console.log("rooms", rooms);
 
   const fetchRooms = async (params: Partial<SearchParams>) => {
     setLoading(true);

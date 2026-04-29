@@ -20,8 +20,6 @@ export default async function MyBookingsPage() {
 
   const data = await res.json();
 
-  console.log("data", data);
-
   return (
     <div className="min-h-screen bg-stone-50">
       <Navbar />

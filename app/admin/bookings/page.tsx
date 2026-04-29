@@ -23,7 +23,6 @@ const TABS: { label: string; value: Tab }[] = [
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  console.log("bookings", bookings);
   const [tab, setTab] = useState<Tab>("ALL");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -41,11 +40,8 @@ export default function BookingsPage() {
       credentials: "include",
     });
 
-    console.log("res", res);
-
     if (res.ok) {
       const data = await res.json();
-      console.log("dataResBooking", data);
       setBookings(data);
     }
   };

@@ -20,8 +20,6 @@ export default async function PaymentPage({ params }: Props) {
     cache: "no-store",
   });
 
-  console.log("res", res);
-
   // handle error จาก backend
   if (res.status === 401) redirect("/login");
   if (res.status === 403 || res.status === 404) notFound();

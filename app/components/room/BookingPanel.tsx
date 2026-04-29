@@ -33,7 +33,6 @@ export default function BookingPanel({ room, bookedDates = [] }: Props) {
 
   const handleBook = () => {
     setError("");
-    console.log("user", !user?.id);
     if (!user?.id) {
       router.push(`/login?callbackUrl=/rooms/${room.id}`);
     } else {

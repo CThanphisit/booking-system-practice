@@ -63,8 +63,6 @@ export default function MyBookingsClient({ initialBookings }: Props) {
     payload: CancelPayload,
     // data: any,
   ) => {
-    console.log("id", id);
-    console.log("dataSubmit", payload);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/booking/${id}/cancel`,

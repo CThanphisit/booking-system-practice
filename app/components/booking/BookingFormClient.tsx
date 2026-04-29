@@ -49,7 +49,6 @@ export default function BookingFormClient({
   const router = useRouter();
 
   const { user } = useAuth();
-  console.log("user", user);
 
   const [step, setStep] = useState(0); // 0 = guest info, 1 = payment
   const [loading, setLoading] = useState(false);
@@ -82,7 +81,6 @@ export default function BookingFormClient({
 
   // ── Submit ────────────────────────────────────────────────────────────────
   const onSubmit = async (data: BookingFormValues) => {
-    console.log("dataSubmit", data);
     setLoading(true);
     try {
       // เปลี่ยนเป็น API call จริง เช่น:
@@ -115,8 +113,6 @@ export default function BookingFormClient({
         note: data.note,
       };
 
-      console.log("payload", payload);
-
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
         method: "POST",
         headers: {
@@ -131,8 +127,6 @@ export default function BookingFormClient({
       }
 
       const dataBooking = await res.json();
-
-      console.log("resCreateBooking", res);
 
       router.push(`/booking/${dataBooking.id}/payment`);
     } catch {

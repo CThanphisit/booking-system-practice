@@ -53,8 +53,6 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
       formData.append("slip", file); // ชื่อ field ต้องตรงกับ Backend
       formData.append("bookingId", bookingId);
 
-      console.log("formData", formData);
-
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/payment/upload-slip`,
         {

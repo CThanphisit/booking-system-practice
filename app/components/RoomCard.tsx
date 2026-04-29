@@ -38,8 +38,6 @@ export default function RoomCard({ room, nights }: Props) {
   const isAvailable = room.status === "AVAILABLE";
   const totalPrice = nights ? room.pricePerNight * nights : null;
 
-  console.log("room", room);
-
   // Placeholder gradient ถ้าไม่มีรูปจริง
   const gradients: Record<string, string> = {
     Standard: "from-stone-200 to-stone-300",

@@ -26,7 +26,6 @@ const STATUS_FILTERS: { label: string; value: RoomStatus | "ALL" }[] = [
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
-  console.log("rooms", rooms);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<RoomTypeName | "ALL">("ALL");
   const [statusFilter, setStatusFilter] = useState<RoomStatus | "ALL">("ALL");
@@ -40,7 +39,6 @@ export default function RoomsPage() {
         method: "GET",
         credentials: "include",
       });
-      console.log("res", res);
       const data = await res.json();
       setRooms(data); // อัปเดต State
     } catch (error) {
@@ -87,7 +85,6 @@ export default function RoomsPage() {
     setModalOpen(true);
   };
   const handleOpenEdit = (room: Room) => {
-    console.log("roomForEdit", room);
     setEditingRoom(room);
     setModalOpen(true);
   };
@@ -104,7 +101,6 @@ export default function RoomsPage() {
   }
 
   const handleSave = async (values: RoomFormValues) => {
-    console.log("values", values);
     if (editingRoom) {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/room/${editingRoom.id}`,

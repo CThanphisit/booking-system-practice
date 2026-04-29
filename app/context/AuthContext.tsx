@@ -25,7 +25,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const [user, setUser] = useState<User | null>(null);
-  console.log("userContext", user);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const checkAuth = async () => {

@@ -34,8 +34,6 @@ export default async function BookingDetailPage({ params }: Props) {
   const { id } = await params;
   const booking = await getBooking(id);
 
-  console.log("booking", booking);
-
   return (
     <div className="min-h-screen bg-stone-50">
       <Navbar />
