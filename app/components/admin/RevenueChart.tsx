@@ -36,7 +36,9 @@ export default function RevenueChart() {
     <div className="bg-white border border-gray-200 rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-900">รายได้ 30 วันล่าสุด</h3>
+          <h3 className="text-sm font-medium text-gray-900">
+            รายได้ 30 วันล่าสุด
+          </h3>
           <p className="text-xs text-gray-500 mt-0.5">รายได้รวม ฿428,500</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
@@ -49,14 +51,21 @@ export default function RevenueChart() {
 
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#6366f1" stopOpacity={0.2} />
                 <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#f3f4f6"
+              vertical={false}
+            />
             <XAxis
               dataKey="date"
               stroke="#9ca3af"
@@ -78,8 +87,8 @@ export default function RevenueChart() {
                 borderRadius: "8px",
                 fontSize: "12px",
               }}
-              formatter={(value: number) => [`฿${value.toLocaleString()}`, "Revenue"]}
-              labelFormatter={(label) => `วันที่ ${label}`}
+              // formatter={(value: number) => [`฿${value.toLocaleString()}`, "Revenue"]}
+              // labelFormatter={(label) => `วันที่ ${label}`}
             />
             <Area
               type="monotone"
