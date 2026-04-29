@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -18,7 +18,7 @@ const loginSchema = z.object({
 
 type LoginFormValue = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const { checkAuth } = useAuth();
 
@@ -80,21 +80,6 @@ export default function LoginPage() {
         />
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-stone-950/60 to-transparent" />
-
-        {/* Text บน image */}
-        {/* <div className="absolute bottom-12 left-10 right-10">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-6 h-px bg-amber-400" />
-            <span className="text-amber-400 text-xs tracking-widest uppercase">
-              ที่พักระดับพรีเมียม
-            </span>
-          </div>
-          <p className="text-white text-2xl font-semibold leading-snug">
-            "พักผ่อนอย่างมีสไตล์
-            <br />
-            ในทุกการเดินทาง"
-          </p>
-        </div> */}
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-20">
@@ -233,5 +218,19 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-stone-950 flex items-center justify-center text-white">
+          Loading...
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
