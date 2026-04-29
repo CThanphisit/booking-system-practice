@@ -7,7 +7,9 @@ import { mockRooms } from "@/lib/mock-rooms";
 import Header from "@/app/components/admin/Header";
 import RoomCard from "@/app/components/admin/rooms/RoomCard";
 import RoomStatusBadge from "@/app/components/admin/rooms/RoomStatusBadge";
-import RoomFormModal from "@/app/components/admin/rooms/RoomFormModal";
+import RoomFormModal, {
+  RoomFormValues,
+} from "@/app/components/admin/rooms/RoomFormModal";
 
 const ROOM_TYPES: { label: string; value: RoomTypeName | "ALL" }[] = [
   { label: "ทุกประเภท", value: "ALL" },
@@ -89,16 +91,16 @@ export default function RoomsPage() {
     setModalOpen(true);
   };
 
-  interface RoomFormValues {
-    roomNumber: string;
-    floor: number;
-    type: string;
-    maxOccupancy: number;
-    pricePerNight: number;
-    status: string;
-    description: string;
-    images: [];
-  }
+  // interface RoomFormValues {
+  //   roomNumber: string;
+  //   floor: number;
+  //   type: string;
+  //   maxOccupancy: number;
+  //   pricePerNight: number;
+  //   status: string;
+  //   description: string;
+  //   images: [];
+  // }
 
   const handleSave = async (values: RoomFormValues) => {
     if (editingRoom) {

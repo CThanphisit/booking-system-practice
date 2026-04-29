@@ -20,7 +20,7 @@ const roomSchema = z.object({
 });
 
 // ดึง Type ออกมาจาก Schema เพื่อใช้ใน Form
-type RoomFormValues = z.infer<typeof roomSchema>;
+export type RoomFormValues = z.infer<typeof roomSchema>;
 
 type Props = {
   open: boolean;
@@ -292,8 +292,8 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
 
   if (!open) return null;
 
-  const onSubmit = (data: RoomFormValues) => {
-    onSave(data);
+  const onSubmit = async (data: RoomFormValues) => {
+    await onSave(data);
     onClose();
   };
 
