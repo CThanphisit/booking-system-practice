@@ -1,9 +1,9 @@
 "use client";
 
-import { RoomType } from "@/types";
+import { RoomTypeName } from "@/types";
 import { SlidersHorizontal } from "lucide-react";
 
-const TYPES: { label: string; value: RoomType | "ALL" }[] = [
+const TYPES: { label: string; value: RoomTypeName | "ALL" }[] = [
   { label: "ทุกประเภท", value: "ALL" },
   { label: "Standard", value: "Standard" },
   { label: "Deluxe", value: "Deluxe" },
@@ -19,11 +19,11 @@ const PRICES = [
 ];
 
 type Props = {
-  selectedType: RoomType | "ALL";
+  selectedType: RoomTypeName | "ALL";
   selectedMaxPrice: number;
   totalCount: number;
   filteredCount: number;
-  onTypeChange: (type: RoomType | "ALL") => void;
+  onTypeChange: (type: RoomTypeName | "ALL") => void;
   onPriceChange: (price: number) => void;
 };
 
@@ -75,10 +75,8 @@ export default function RoomFilters({
 
       {/* Result count */}
       <p className="text-sm text-stone-500 shrink-0">
-        พบ{" "}
-        <span className="font-medium text-stone-800">{filteredCount}</span>
-        {" "}จาก{" "}
-        <span className="font-medium text-stone-800">{totalCount}</span>{" "}
+        พบ <span className="font-medium text-stone-800">{filteredCount}</span>{" "}
+        จาก <span className="font-medium text-stone-800">{totalCount}</span>{" "}
         ห้อง
       </p>
     </div>
