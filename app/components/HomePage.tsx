@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { mockRooms } from "@/lib/mock-rooms";
 import { Room, RoomTypeName, RoomValues, SearchParams } from "@/types";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import Navbar from "../components/Navbar";

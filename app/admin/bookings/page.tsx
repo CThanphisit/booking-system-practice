@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Search, Download, Eye } from "lucide-react";
-import { mockBookings } from "@/lib/mock-bookings";
 import { Booking, BookingStatus } from "@/types";
 import Header from "@/app/components/admin/Header";
 import PaymentBadge from "@/app/components/admin/bookings/PaymentBadge";

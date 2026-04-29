@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { mockRooms } from "@/lib/mock-rooms";
 import Navbar from "../../components/Navbar";
 import BookingFormClient from "../../components/booking/BookingFormClient";
 

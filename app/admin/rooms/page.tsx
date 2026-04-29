@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { Plus, Search, LayoutGrid, Table2 } from "lucide-react";
 import { Room, RoomStatus, RoomTypeName } from "@/types";
-import { mockRooms } from "@/lib/mock-rooms";
 import Header from "@/app/components/admin/Header";
 import RoomCard from "@/app/components/admin/rooms/RoomCard";
 import RoomStatusBadge from "@/app/components/admin/rooms/RoomStatusBadge";

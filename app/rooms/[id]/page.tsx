@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { mockRooms } from "@/lib/mock-rooms";
 import Navbar from "@/app/components/Navbar";
 import RoomImageGallery from "@/app/components/room/RoomImageGallery";
 import RoomInfo from "@/app/components/room/RoomInfo";
@@ -89,7 +88,7 @@ export default async function RoomDetailPage({ params }: Props) {
   );
 }
 
-// ── Static Params (ถ้าใช้ static export) ─────────────────────────────────────
-export function generateStaticParams() {
-  return mockRooms.map((r) => ({ id: r.id }));
-}
+// ── Static Params (ถ้าใช้ static export)
+// export function generateStaticParams() {
+//   return mockRooms.map((r) => ({ id: r.id }));
+// }
