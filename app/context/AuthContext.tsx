@@ -60,6 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       credentials: "include",
     });
     setUser(null);
+
+    window.location.href = "/login";
   };
 
   return (

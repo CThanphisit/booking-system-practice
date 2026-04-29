@@ -10,7 +10,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // const [user, setUser] = useState<UserType | null>(null);
 
@@ -83,7 +83,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   className="px-4 py-2 text-sm bg-amber-500 text-stone-950 rounded-lg font-medium hover:bg-amber-400 transition-colors cursor-pointer ml-2"
-                  onClick={handleLogout}
+                  onClick={logout}
                 >
                   ออกจากระบบ
                 </button>
