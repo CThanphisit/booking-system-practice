@@ -25,10 +25,14 @@ export default function HomePage() {
       if (params.checkOut) query.set("checkOut", params.checkOut);
       if (params.guests) query.set("guests", String(params.guests));
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}room?${query.toString()}`,
-        { cache: "no-store" },
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}room?${query.toString()}`,
+      //   { cache: "no-store" },
+      // );
+      const res = await fetch(`/api/proxy/room?${query.toString()}`, {
+        cache: "no-store",
+      });
+      console.log("resGetRooms", res);
       const data = await res.json();
       setRooms(data);
     } catch (err) {

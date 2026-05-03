@@ -20,7 +20,7 @@ type LoginFormValue = z.infer<typeof loginSchema>;
 
 function LoginForm() {
   const router = useRouter();
-  const { checkAuth } = useAuth();
+  const { user, checkAuth } = useAuth();
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -37,23 +37,57 @@ function LoginForm() {
     mode: "onChange",
   });
 
+  // const onSubmit = async (data: LoginFormValue) => {
+  //   setServerError("");
+  //   try {
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/login`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(data),
+  //       credentials: "include",
+  //     });
+
+  //     if (!res.ok) throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+
+  //     await checkAuth();
+
+  //     const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
+  //       credentials: "include",
+  //     });
+  //     const user = await getMe.json();
+
+  //     if (user.role === "ADMIN") {
+  //       router.push("/admin/dashboard_admin");
+  //     } else {
+  //       const destination = callbackUrl || "/";
+  //       router.push(destination);
+  //       router.refresh();
+  //     }
+  //   } catch (err: any) {
+  //     setServerError(err.message);
+  //   }
+  // };
+
   const onSubmit = async (data: LoginFormValue) => {
     setServerError("");
+
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/login`, {
+      const res = await fetch("/api/proxy/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
         credentials: "include",
       });
+      console.log("resLogin", res);
 
       if (!res.ok) throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
 
       await checkAuth();
 
-      const getMe = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
+      const getMe = await fetch("/api/proxy/auth/me", {
         credentials: "include",
       });
+
       const user = await getMe.json();
 
       if (user.role === "ADMIN") {

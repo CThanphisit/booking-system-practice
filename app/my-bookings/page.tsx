@@ -6,15 +6,27 @@ import { cookies } from "next/headers";
 
 export default async function MyBookingsPage() {
   const cookieStore = await cookies();
-  const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
-    headers: {
-      cookie: cookieHeader,
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+  //   headers: {
+  //     cookie: cookieStore.toString(),
+  //   },
+  // });
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/proxy/booking`,
+    {
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+      cache: "no-store",
     },
-  });
+  );
+
+  console.log("resGetMyBooking", res);
 
   if (!res.ok) {
+    console.log("res", res);
     throw new Error("Failed to fetch data");
   }
 
