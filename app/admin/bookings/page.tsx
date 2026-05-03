@@ -34,10 +34,15 @@ export default function BookingsPage() {
   const PER_PAGE = 5;
 
   const getListBookings = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+    //   method: "GET",
+    //   credentials: "include",
+    // });
+    const res = await fetch(`/api/proxy/booking`, {
       method: "GET",
       credentials: "include",
     });
+    console.log("getBookingAdmin", res);
 
     if (res.ok) {
       const data = await res.json();
@@ -109,7 +114,15 @@ export default function BookingsPage() {
     //   prev.map((b) => (b.id === id ? { ...b, status } : b)),
     // );
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ status }),
+    //   credentials: "include",
+    // });
+    const res = await fetch(`/api/proxy/booking/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -132,18 +145,26 @@ export default function BookingsPage() {
 
   const handleApprovePayment = async (id: string, adminId: string) => {
     try {
-      const res = await fetch(
-        `
-      ${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
-          credentials: "include",
+      // const res = await fetch(
+      //   `
+      // ${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         await getListBookings();
@@ -161,21 +182,33 @@ export default function BookingsPage() {
     note: string,
   ) => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            action: "REJECT",
-            adminId: adminId,
-            note: note,
-          }),
-          credentials: "include",
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       action: "REJECT",
+      //       adminId: adminId,
+      //       note: note,
+      //     }),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          action: "REJECT",
+          adminId: adminId,
+          note: note,
+        }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         await getListBookings();

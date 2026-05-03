@@ -53,16 +53,19 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
       formData.append("slip", file); // ชื่อ field ต้องตรงกับ Backend
       formData.append("bookingId", bookingId);
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
-        {
-          method: "POST",
-          credentials: "include", // ส่ง cookie ไปด้วย
-          body: formData,
-          // ❌ อย่าใส่ Content-Type เอง
-          // fetch จะ set boundary ให้อัตโนมัติ
-        },
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
+      //   {
+      //     method: "POST",
+      //     credentials: "include",
+      //     body: formData,
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/upload-slip`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
 
       if (!res.ok) {
         const data = await res.json();

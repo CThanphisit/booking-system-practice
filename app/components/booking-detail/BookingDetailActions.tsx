@@ -45,15 +45,21 @@ export default function BookingDetailActions({ booking }: Props) {
     setError("");
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}booking/${booking.id}/cancel`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ reason }),
-        },
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}booking/${booking.id}/cancel`,
+      //   {
+      //     method: "PATCH",
+      //     headers: { "Content-Type": "application/json" },
+      //     credentials: "include",
+      //     body: JSON.stringify({ reason }),
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/booking/${booking.id}/cancel`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ reason }),
+      });
 
       if (!res.ok) {
         const data = await res.json();

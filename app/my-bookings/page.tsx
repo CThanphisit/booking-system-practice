@@ -26,7 +26,6 @@ export default async function MyBookingsPage() {
   console.log("resGetMyBooking", res);
 
   if (!res.ok) {
-    console.log("res", res);
     throw new Error("Failed to fetch data");
   }
 

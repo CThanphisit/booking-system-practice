@@ -63,14 +63,19 @@ function UploadSlipModal({
       formData.append("slip", file);
       formData.append("bookingId", bookingId);
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        },
-      );
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
+      //   {
+      //     method: "POST",
+      //     credentials: "include",
+      //     body: formData,
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/upload-slip`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
 
       if (!res.ok) {
         const data = await res.json();

@@ -62,15 +62,21 @@ export default function PaymentsClient({ initialPayments }: Props) {
   }, [payments, tab, search]);
 
   const handleApprove = async (id: string) => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "APPROVE" }),
-      },
-    );
+    // const res = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+    //   {
+    //     method: "PATCH",
+    //     credentials: "include",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ action: "APPROVE" }),
+    //   },
+    // );
+    const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "APPROVE" }),
+    });
 
     if (res.ok) {
       router.refresh();
@@ -78,30 +84,42 @@ export default function PaymentsClient({ initialPayments }: Props) {
   };
 
   const handleReject = async (id: string, note: string) => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "REJECT", note }),
-      },
-    );
+    // const res = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+    //   {
+    //     method: "PATCH",
+    //     credentials: "include",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ action: "REJECT", note }),
+    //   },
+    // );
+    const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "REJECT", note }),
+    });
     if (res.ok) {
       router.refresh();
     }
   };
 
   const handleConfirmRefund = async (id: string, note: string) => {
-    await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/refund`,
-      {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: note }),
-      },
-    );
+    // await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/refund`,
+    //   {
+    //     method: "PATCH",
+    //     credentials: "include",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ note: note }),
+    //   },
+    // );
+    await fetch(`/api/proxy/payment/admin/${id}/refund`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note: note }),
+    });
     router.refresh();
   };
 

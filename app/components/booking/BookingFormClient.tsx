@@ -113,7 +113,15 @@ export default function BookingFormClient({
         note: data.note,
       };
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(payload),
+      //   credentials: "include",
+      // });
+      const res = await fetch(`/api/proxy/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -30,10 +30,17 @@ export default async function ConfirmationPage({ params }: Props) {
 
   const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+  //   headers: { cookie: cookieHeader },
+  //   cache: "no-store",
+  // });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/proxy/booking/${id}`,
+    {
+      headers: { cookie: cookieHeader },
+      cache: "no-store",
+    },
+  );
 
   const booking = await res.json();
 
