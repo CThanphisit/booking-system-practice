@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { User } from "@/types";
+import { useAuth } from "@/app/context/AuthContext";
 
 type MenuItem = {
   label: string;
@@ -42,31 +43,11 @@ const insightsMenu: MenuItem[] = [
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    window.location.href = "/login";
+    await logout();
   };
-
-  useEffect(() => {
-    const getMe = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const data = await res.json();
-
-      setUser(data);
-    };
-
-    getMe();
-  }, []);
 
   const renderMenu = (items: MenuItem[]) =>
     items.map((item) => {
