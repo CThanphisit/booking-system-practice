@@ -77,7 +77,7 @@ export default function BookingDetailActions({ booking }: Props) {
 
   return (
     <>
-      <div className="bg-white border border-stone-200 rounded-2xl px-6 py-5">
+      {/* <div className="bg-white border border-stone-200 rounded-2xl px-6 py-5">
         <p className="text-xs font-medium text-stone-400 uppercase tracking-wider mb-4">
           การดำเนินการ
         </p>
@@ -88,7 +88,7 @@ export default function BookingDetailActions({ booking }: Props) {
           <X className="w-4 h-4" />
           ยกเลิกการจอง
         </button>
-      </div>
+      </div> */}
 
       {/* Cancel Modal */}
       {showModal && (

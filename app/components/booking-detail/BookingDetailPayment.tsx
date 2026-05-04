@@ -71,11 +71,16 @@ function UploadSlipModal({
       //     body: formData,
       //   },
       // );
-      const res = await fetch(`/api/proxy/payment/upload-slip`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      // const res = await fetch(`/api/proxy/payment/upload-slip`, {
+      // const res = await fetch(`http://localhost:3001/payment/upload-slip`, {
+      const res = await fetch(
+        `https://backend-booking-system-practice.onrender.com/payment/upload-slip`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        },
+      );
 
       if (!res.ok) {
         const data = await res.json();

@@ -78,9 +78,9 @@ export default function PaymentsClient({ initialPayments }: Props) {
       body: JSON.stringify({ action: "APPROVE" }),
     });
 
-    if (res.ok) {
-      router.refresh();
-    }
+    router.refresh();
+    // if (res.ok) {
+    // }
   };
 
   const handleReject = async (id: string, note: string) => {
@@ -99,9 +99,9 @@ export default function PaymentsClient({ initialPayments }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "REJECT", note }),
     });
-    if (res.ok) {
-      router.refresh();
-    }
+    router.refresh();
+    // if (res.ok) {
+    // }
   };
 
   const handleConfirmRefund = async (id: string, note: string) => {

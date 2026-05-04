@@ -86,15 +86,20 @@ function ImageManager({
       for (const file of validFiles) {
         const formData = new FormData();
         formData.append("image", file);
-        // const res = await fetch(
-        //   `${process.env.NEXT_PUBLIC_API_URL}room/upload-image`,
-        //   { method: "POST", credentials: "include", body: formData },
-        // );
-        const res = await fetch(`/api/proxy/room/upload-image`, {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        });
+        // const res = await fetch(`http://localhost:3001/room/upload-image`, {
+        const res = await fetch(
+          `https://backend-booking-system-practice.onrender.com/room/upload-image`,
+          {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          },
+        );
+        // const res = await fetch(`/api/proxy/room/upload-image`, {
+        //   method: "POST",
+        //   credentials: "include",
+        //   body: formData,
+        // });
 
         if (!res.ok) throw new Error("Upload ไม่สำเร็จ");
         const data = await res.json();

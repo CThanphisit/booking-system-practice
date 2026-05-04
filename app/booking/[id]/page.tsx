@@ -17,7 +17,9 @@ export default async function BookingFormPage({ params, searchParams }: Props) {
   const sParams = await searchParams;
 
   // const fetchData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}`);
-  const fetchData = await fetch(`/api/proxy/room/${id}`);
+  const fetchData = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/proxy/room/${id}`,
+  );
 
   const data = await fetchData.json();
   if (!data) notFound();

@@ -14,24 +14,42 @@ type Props = { users: AdminUser[] };
 
 export default function UsersClient({ users }: Props) {
   const router = useRouter();
-  const [formTarget, setFormTarget]     = useState<AdminUser | null | "new">(null);
+  const [formTarget, setFormTarget] = useState<AdminUser | null | "new">(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
 
   // ── Create ──────────────────────────────────────────────────────────────────
   const handleCreate = async (data: UserFormData) => {
-    await fetch(`${API}/users`, {
+    // await fetch(`${API}/users`, {
+    //   method: "POST",
+    //   credentials: "include",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(data),
+    // });
+    const res = await fetch(`/api/proxy/users`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    router.refresh();
+    if (!res.ok) {
+      console.log("res", res);
+      alert("เกิดข้อผิดพลาดในการสร้างผู้ใช้");
+    } else {
+      setFormTarget(null);
+      router.refresh();
+    }
   };
 
   // ── Update ──────────────────────────────────────────────────────────────────
   const handleUpdate = async (data: UserFormData) => {
     if (!formTarget || formTarget === "new") return;
-    await fetch(`${API}/users/${formTarget.id}`, {
+    // await fetch(`${API}/users/${formTarget.id}`, {
+    //   method: "PATCH",
+    //   credentials: "include",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(data),
+    // });
+    await fetch(`/api/proxy/users/${formTarget.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -42,7 +60,11 @@ export default function UsersClient({ users }: Props) {
 
   // ── Delete ──────────────────────────────────────────────────────────────────
   const handleDelete = async (id: string) => {
-    await fetch(`${API}/users/${id}`, {
+    // await fetch(`${API}/users/${id}`, {
+    //   method: "DELETE",
+    //   credentials: "include",
+    // });
+    await fetch(`/api/proxy/users/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -77,30 +99,42 @@ export default function UsersClient({ users }: Props) {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-semibold shrink-0">
-                        {user.first_name[0]}{user.last_name[0]}
+                        {user.first_name[0]}
+                        {user.last_name[0]}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{user.first_name} {user.last_name}</p>
+                        <p className="font-medium text-gray-900">
+                          {user.first_name} {user.last_name}
+                        </p>
                         <p className="text-xs text-gray-400">{user.email}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-gray-600">{user.phoneNumber}</td>
+                  <td className="px-5 py-3 text-gray-600">
+                    {user.phoneNumber}
+                  </td>
                   <td className="px-5 py-3">
-                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                      user.role === "ADMIN"
-                        ? "bg-indigo-50 text-indigo-700"
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
+                    <span
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+                        user.role === "ADMIN"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
                       {user.role}
                     </span>
                   </td>
                   <td className="px-5 py-3 text-gray-500 text-xs">
-                    {format(parseISO(user.createdAt), "d MMM yyyy", { locale: th })}
+                    {format(parseISO(user.createdAt), "d MMM yyyy", {
+                      locale: th,
+                    })}
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2 justify-end">
@@ -125,7 +159,10 @@ export default function UsersClient({ users }: Props) {
 
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-gray-400 text-sm">
+                  <td
+                    colSpan={5}
+                    className="text-center py-12 text-gray-400 text-sm"
+                  >
                     ยังไม่มีผู้ใช้
                   </td>
                 </tr>
