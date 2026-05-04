@@ -59,6 +59,9 @@ function UploadSlipModal({
     setError("");
 
     try {
+      const { token } = await fetch("/api/auth/token").then((r) => r.json());
+      if (!token) throw new Error("กรุณาเข้าสู่ระบบก่อน");
+
       const formData = new FormData();
       formData.append("slip", file);
       formData.append("bookingId", bookingId);
@@ -77,7 +80,7 @@ function UploadSlipModal({
         `https://backend-booking-system-practice.onrender.com/payment/upload-slip`,
         {
           method: "POST",
-          credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         },
       );
