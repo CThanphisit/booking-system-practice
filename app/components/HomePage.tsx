@@ -32,7 +32,6 @@ export default function HomePage() {
       const res = await fetch(`/api/proxy/room?${query.toString()}`, {
         cache: "no-store",
       });
-      console.log("resGetRooms", res);
       const data = await res.json();
       setRooms(data);
     } catch (err) {

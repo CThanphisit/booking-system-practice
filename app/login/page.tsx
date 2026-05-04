@@ -78,7 +78,6 @@ function LoginForm() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-      console.log("resLogin", res);
 
       if (!res.ok) throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
 

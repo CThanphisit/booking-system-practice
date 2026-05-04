@@ -32,7 +32,6 @@ export default function UsersClient({ users }: Props) {
       body: JSON.stringify(data),
     });
     if (!res.ok) {
-      console.log("res", res);
       alert("เกิดข้อผิดพลาดในการสร้างผู้ใช้");
     } else {
       setFormTarget(null);

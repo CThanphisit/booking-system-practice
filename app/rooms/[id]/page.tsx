@@ -37,8 +37,6 @@ export default async function RoomDetailPage({ params }: Props) {
       },
     ),
   ]);
-  console.log("roomRes", roomRes);
-  console.log("bookedRes", bookedRes);
 
   if (!roomRes.ok) notFound();
 

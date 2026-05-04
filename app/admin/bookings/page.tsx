@@ -42,7 +42,6 @@ export default function BookingsPage() {
       method: "GET",
       credentials: "include",
     });
-    console.log("getBookingAdmin", res);
 
     if (res.ok) {
       const data = await res.json();

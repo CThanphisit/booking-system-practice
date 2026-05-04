@@ -11,10 +11,6 @@ async function handler(req: NextRequest, context: any) {
   const headerList = await headers();
   const cookie = headerList.get("cookie") || "";
 
-  console.log("params.path:", path);
-  console.log("joinedPath:", joinedPath);
-  console.log("path", `${BACKEND_URL}/${joinedPath}`);
-
   const res = await fetch(`${BACKEND_URL}/${joinedPath}`, {
     method: req.method,
     headers: {

@@ -38,8 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const res = await fetch("/api/proxy/auth/me");
 
-      console.log("resGetMe", res);
-
       if (res.ok) {
         const data = await res.json();
         setUser(data);
