@@ -27,9 +27,9 @@ async function handler(req: NextRequest, context: any) {
     status: res.status,
   });
 
-  const setCookie = res.headers.get("set-cookie");
-  if (setCookie) {
-    response.headers.append("set-cookie", setCookie);
+  const setCookies = res.headers.getSetCookie();
+  for (const cookie of setCookies) {
+    response.headers.append("set-cookie", cookie);
   }
 
   return response;
