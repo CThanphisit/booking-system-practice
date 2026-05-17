@@ -48,19 +48,29 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
     setError("");
 
     try {
-      // ใช้ FormData ส่งไป Backend
+      const { token } = await fetch("/api/auth/token").then((r) => r.json());
+      if (!token) throw new Error("กรุณาเข้าสู่ระบบก่อน");
+
       const formData = new FormData();
       formData.append("slip", file); // ชื่อ field ต้องตรงกับ Backend
       formData.append("bookingId", bookingId);
 
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
+      //   {
+      //     method: "POST",
+      //     credentials: "include",
+      //     body: formData,
+      //   },
+      // );
+      // const res = await fetch(`http://localhost:3001/payment/upload-slip`, {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/upload-slip`,
+        `https://backend-booking-system-practice.onrender.com/payment/upload-slip`,
         {
           method: "POST",
-          credentials: "include", // ส่ง cookie ไปด้วย
+          // credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
-          // ❌ อย่าใส่ Content-Type เอง
-          // fetch จะ set boundary ให้อัตโนมัติ
         },
       );
 

@@ -36,7 +36,7 @@ export default function RoomsPage() {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room/admin`, {
+      const res = await fetch(`/api/proxy/room/admin`, {
         method: "GET",
         credentials: "include",
       });
@@ -103,17 +103,25 @@ export default function RoomsPage() {
 
   const handleSave = async (values: RoomFormValues) => {
     if (editingRoom) {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}room/${editingRoom.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-          credentials: "include",
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}room/${editingRoom.id}`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(values),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/room/${editingRoom.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
 
       if (res.ok) {
         await fetchRooms();
@@ -122,7 +130,15 @@ export default function RoomsPage() {
         throw new Error("แก้ไขห้องไม่สำเร็จ");
       }
     } else {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room`, {
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(values),
+      //   credentials: "include",
+      // });
+      const res = await fetch(`/api/proxy/room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +157,13 @@ export default function RoomsPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("ต้องการลบห้องนี้ใช่ไหม?")) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}`, {
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}`, {
+      //   method: "DELETE",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      const res = await fetch(`/api/proxy/room/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

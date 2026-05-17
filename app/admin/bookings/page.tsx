@@ -34,7 +34,11 @@ export default function BookingsPage() {
   const PER_PAGE = 5;
 
   const getListBookings = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+    //   method: "GET",
+    //   credentials: "include",
+    // });
+    const res = await fetch(`/api/proxy/booking`, {
       method: "GET",
       credentials: "include",
     });
@@ -109,7 +113,15 @@ export default function BookingsPage() {
     //   prev.map((b) => (b.id === id ? { ...b, status } : b)),
     // );
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ status }),
+    //   credentials: "include",
+    // });
+    const res = await fetch(`/api/proxy/booking/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -132,18 +144,26 @@ export default function BookingsPage() {
 
   const handleApprovePayment = async (id: string, adminId: string) => {
     try {
-      const res = await fetch(
-        `
-      ${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
-          credentials: "include",
+      // const res = await fetch(
+      //   `
+      // ${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ action: "APPROVE", adminId: adminId }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         await getListBookings();
@@ -161,21 +181,33 @@ export default function BookingsPage() {
     note: string,
   ) => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            action: "REJECT",
-            adminId: adminId,
-            note: note,
-          }),
-          credentials: "include",
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}payment/admin/${id}/review`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       action: "REJECT",
+      //       adminId: adminId,
+      //       note: note,
+      //     }),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/payment/admin/${id}/review`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          action: "REJECT",
+          adminId: adminId,
+          note: note,
+        }),
+        credentials: "include",
+      });
 
       if (res.ok) {
         await getListBookings();
@@ -185,6 +217,28 @@ export default function BookingsPage() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleExportCSV = async () => {
+    const res = await fetch(
+      `/api/proxy/booking/export/csv?tab=${tab}&search=${search}&dateFrom=${dateFrom}&dateTo=${dateTo}&sortBy=${sortBy}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) return;
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `การจองทั้งหมด-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -311,7 +365,10 @@ export default function BookingsPage() {
           </select>
 
           {/* Export */}
-          <button className="flex items-center gap-2 text-sm border border-gray-200 rounded-md px-3 py-2 hover:bg-gray-50">
+          <button
+            className="flex items-center gap-2 text-sm border border-gray-200 rounded-md px-3 py-2 hover:bg-gray-50"
+            onClick={handleExportCSV}
+          >
             <Download className="w-4 h-4" />
             Export
           </button>

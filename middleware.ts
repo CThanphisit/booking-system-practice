@@ -10,6 +10,7 @@ export function middleware(request: NextRequest) {
 
   const isAuthPage = pathname.startsWith("/login");
   const isAdminRoute = pathname.startsWith("/admin");
+  const isSharedRoute = pathname.startsWith("/profile");
 
   // เช็ค Login
   if (!token && !isAuthPage) {
@@ -26,8 +27,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // ADMIN restriction
-  if (isAdmin && !isAdminRoute) {
+  // ADMIN restriction — ยกเว้น shared routes เช่น /profile
+  if (isAdmin && !isAdminRoute && !isSharedRoute) {
     return NextResponse.redirect(
       new URL("/admin/dashboard_admin", request.url),
     );
@@ -44,5 +45,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/bookings/:path*", "/admin/:path*"],
+  matcher: ["/dashboard/:path*", "/bookings/:path*", "/admin/:path*", "/profile/:path*", "/profile"],
 };

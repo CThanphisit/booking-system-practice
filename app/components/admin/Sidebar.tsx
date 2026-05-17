@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { User } from "@/types";
+import { useAuth } from "@/app/context/AuthContext";
 
 type MenuItem = {
   label: string;
@@ -27,7 +28,7 @@ type MenuItem = {
 const mainMenu: MenuItem[] = [
   { label: "Dashboard", href: "/admin/dashboard_admin", icon: LayoutDashboard },
   { label: "Rooms", href: "/admin/rooms", icon: Home },
-  { label: "Bookings", href: "/admin/bookings", icon: Calendar, badge: 8 },
+  { label: "Bookings", href: "/admin/bookings", icon: Calendar },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   // { label: "Reviews", href: "/admin/reviews", icon: Star },
@@ -42,31 +43,11 @@ const insightsMenu: MenuItem[] = [
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    window.location.href = "/login";
+    await logout();
   };
-
-  useEffect(() => {
-    const getMe = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/me`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const data = await res.json();
-
-      setUser(data);
-    };
-
-    getMe();
-  }, []);
 
   const renderMenu = (items: MenuItem[]) =>
     items.map((item) => {
@@ -99,9 +80,9 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 py-4 border-b border-gray-200">
         <div className="w-8 h-8 rounded-md bg-indigo-600 flex items-center justify-center text-white font-medium text-sm">
-          B
+          S
         </div>
-        <span className="font-medium text-gray-900">Bookify Admin</span>
+        <span className="font-medium text-gray-900">StayEase Admin</span>
       </div>
 
       {/* Menu */}

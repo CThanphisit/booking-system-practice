@@ -27,12 +27,15 @@ export default async function RoomDetailPage({ params }: Props) {
   // if (!data) notFound();
 
   const [roomRes, bookedRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}api/proxy/room/${id}`, {
       cache: "no-store",
     }),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}room/${id}/booked-dates`, {
-      cache: "no-store",
-    }),
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}api/proxy/room/${id}/booked-dates`,
+      {
+        cache: "no-store",
+      },
+    ),
   ]);
 
   if (!roomRes.ok) notFound();
@@ -82,7 +85,7 @@ export default async function RoomDetailPage({ params }: Props) {
 
       {/* Footer */}
       <footer className="bg-stone-950 text-stone-500 text-center text-sm py-8">
-        <p>© 2026 Bookify · ระบบจองที่พักออนไลน์</p>
+        <p>© 2026 StayEase · ระบบจองที่พักออนไลน์</p>
       </footer>
     </div>
   );

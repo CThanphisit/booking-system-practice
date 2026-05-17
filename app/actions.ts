@@ -18,13 +18,17 @@ export async function registerUser(data: {
     password: data.password,
   };
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}auth/register`, {
+  const res = await fetch(
+    `https://backend-booking-system-practice.onrender.com/auth/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(rawFormData),
     },
-    body: JSON.stringify(rawFormData),
-  });
+  );
 
   if (!res.ok) {
     // แทนที่จะ throw error ให้ return object กลับไปแสดงที่ UI

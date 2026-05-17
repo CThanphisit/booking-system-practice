@@ -6,13 +6,22 @@ import { cookies } from "next/headers";
 
 export default async function MyBookingsPage() {
   const cookieStore = await cookies();
-  const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
-    headers: {
-      cookie: cookieHeader,
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking`, {
+  //   headers: {
+  //     cookie: cookieStore.toString(),
+  //   },
+  // });
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/proxy/booking`,
+    {
+      headers: {
+        cookie: cookieStore.toString(),
+      },
+      cache: "no-store",
     },
-  });
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");
@@ -47,7 +56,7 @@ export default async function MyBookingsPage() {
       </main>
 
       <footer className="bg-stone-950 text-stone-500 text-center text-sm py-8">
-        <p>© 2026 Bookify · ระบบจองที่พักออนไลน์</p>
+        <p>© 2026 StayEase · ระบบจองที่พักออนไลน์</p>
       </footer>
     </div>
   );

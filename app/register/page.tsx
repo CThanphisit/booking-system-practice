@@ -14,7 +14,12 @@ const registerSchema = z.object({
   last_name: z.string().min(1, "กรุณากรอกนามสกุล"),
   phoneNumber: z.string().min(10, "กรุณากรอกเบอร์โทรศัพท์"),
   email: z.string().email("รูปแบบอีเมลไม่ถูกต้อง"),
-  password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
+  password: z
+    .string()
+    .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร")
+    .regex(/[A-Z]/, "ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว")
+    .regex(/[a-z]/, "ต้องมีตัวพิมพ์เล็กอย่างน้อย 1 ตัว")
+    .regex(/[^a-zA-Z0-9]/, "ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว เช่น !@#$%"),
 });
 
 type RegisterFormValue = z.infer<typeof registerSchema>;
@@ -103,10 +108,10 @@ export default function RegisterPage() {
         <div className="mb-10">
           <Link href="/" className="flex items-center gap-2 w-fit">
             <div className="w-8 h-8 rounded-md bg-amber-500 flex items-center justify-center">
-              <span className="text-stone-950 font-bold text-sm">B</span>
+              <span className="text-stone-950 font-bold text-sm">S</span>
             </div>
             <span className="text-white font-semibold text-lg tracking-wide">
-              Bookify
+              StayEase
             </span>
           </Link>
         </div>
@@ -115,7 +120,7 @@ export default function RegisterPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">สร้างบัญชีใหม่</h1>
           <p className="text-stone-400 text-sm">
-            กรอกข้อมูลด้านล่างเพื่อเริ่มใช้งาน Bookify
+            กรอกข้อมูลด้านล่างเพื่อเริ่มใช้งาน StayEase
           </p>
         </div>
 
@@ -257,7 +262,7 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-stone-700 mt-10">
-          © 2026 Bookify · ระบบจองที่พักออนไลน์
+          © 2026 StayEase · ระบบจองที่พักออนไลน์
         </p>
       </div>
     </div>

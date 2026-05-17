@@ -18,10 +18,13 @@ async function getBooking(id: string): Promise<MyBooking> {
   const cookieStore = await cookies();
   const cookieHeader = await cookieStore.toString();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}booking/${id}`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/proxy/booking/${id}`,
+    {
+      headers: { cookie: cookieHeader },
+      cache: "no-store",
+    },
+  );
 
   if (res.status === 401) redirect("/login");
   if (res.status === 403 || res.status === 404) notFound();
@@ -83,7 +86,7 @@ export default async function BookingDetailPage({ params }: Props) {
       </main>
 
       <footer className="bg-stone-950 text-stone-500 text-center text-sm py-8">
-        <p>© 2026 Bookify · ระบบจองที่พักออนไลน์</p>
+        <p>© 2026 StayEase · ระบบจองที่พักออนไลน์</p>
       </footer>
     </div>
   );

@@ -64,17 +64,25 @@ export default function MyBookingsClient({ initialBookings }: Props) {
     // data: any,
   ) => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}booking/${id}/cancel`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-          credentials: "include",
+      // const res = await fetch(
+      //   `${process.env.NEXT_PUBLIC_API_URL}booking/${id}/cancel`,
+      //   {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(payload),
+      //     credentials: "include",
+      //   },
+      // );
+      const res = await fetch(`/api/proxy/booking/${id}/cancel`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(payload),
+        credentials: "include",
+      });
 
       if (res.ok) {
         showToast("ยกเลิกการจองเรียบร้อยแล้ว");
