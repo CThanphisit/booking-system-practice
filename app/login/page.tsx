@@ -119,10 +119,10 @@ function LoginForm() {
         <div className="mb-12">
           <Link href="/" className="flex items-center gap-2 group w-fit">
             <div className="w-8 h-8 rounded-md bg-amber-500 flex items-center justify-center">
-              <span className="text-stone-950 font-bold text-sm">B</span>
+              <span className="text-stone-950 font-bold text-sm">S</span>
             </div>
             <span className="text-white font-semibold text-lg tracking-wide">
-              Bookify
+              StayEase
             </span>
           </Link>
         </div>
@@ -247,7 +247,7 @@ function LoginForm() {
         </p>
 
         <p className="text-center text-xs text-stone-700 mt-12">
-          © 2026 Bookify · ระบบจองที่พักออนไลน์
+          © 2026 StayEase · ระบบจองที่พักออนไลน์
         </p>
       </div>
     </div>

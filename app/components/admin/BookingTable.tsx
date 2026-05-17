@@ -1,73 +1,29 @@
 import Link from "next/link";
-import StatusBadge from "./StatusBadge";
+import { cookies } from "next/headers";
+import { format, parseISO } from "date-fns";
+import type { Booking } from "@/types";
+import BookingStatusBadge from "./bookings/BookingStatusBadge";
 
-type BookingStatus =
-  | "PENDING"
-  | "CONFIRMED"
-  | "CHECKED_IN"
-  | "COMPLETED"
-  | "CANCELLED";
+export default async function BookingTable() {
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
 
-type Booking = {
-  id: string;
-  code: string;
-  customer: string;
-  room: string;
-  checkIn: string;
-  amount: number;
-  status: BookingStatus;
-};
+  let bookings: Booking[] = [];
+  try {
+    const res = await fetch(`${process.env.API_URL}booking?limit=5`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: cookieHeader,
+      },
+    });
+    if (res.ok) {
+      bookings = await res.json();
+    }
+  } catch (error) {
+    console.error("Failed to fetch bookings", error);
+  }
 
-// mock data — เปลี่ยนเป็นข้อมูลจริงจาก API ภายหลัง
-const bookings: Booking[] = [
-  {
-    id: "1",
-    code: "BK-1042",
-    customer: "สมชาย ใจดี",
-    room: "Deluxe 302",
-    checkIn: "22 เม.ย. 2026",
-    amount: 4500,
-    status: "CONFIRMED",
-  },
-  {
-    id: "2",
-    code: "BK-1041",
-    customer: "Anna Wilson",
-    room: "Suite 501",
-    checkIn: "21 เม.ย. 2026",
-    amount: 8200,
-    status: "PENDING",
-  },
-  {
-    id: "3",
-    code: "BK-1040",
-    customer: "มานี รักดี",
-    room: "Standard 105",
-    checkIn: "20 เม.ย. 2026",
-    amount: 2100,
-    status: "CHECKED_IN",
-  },
-  {
-    id: "4",
-    code: "BK-1039",
-    customer: "John Smith",
-    room: "Deluxe 308",
-    checkIn: "19 เม.ย. 2026",
-    amount: 4500,
-    status: "CANCELLED",
-  },
-  {
-    id: "5",
-    code: "BK-1038",
-    customer: "นภา สวยงาม",
-    room: "Family 201",
-    checkIn: "18 เม.ย. 2026",
-    amount: 6800,
-    status: "COMPLETED",
-  },
-];
-
-export default function BookingTable() {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
@@ -95,22 +51,31 @@ export default function BookingTable() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {bookings.map((booking) => (
-              <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
+              <tr
+                key={booking.id}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 <td className="px-5 py-3 font-mono text-xs text-gray-700">
                   {booking.code}
                 </td>
-                <td className="px-5 py-3 text-gray-900">{booking.customer}</td>
-                <td className="px-5 py-3 text-gray-600">{booking.room}</td>
-                <td className="px-5 py-3 text-gray-600">{booking.checkIn}</td>
+                <td className="px-5 py-3 text-gray-900">
+                  {booking.user.first_name} {booking.user.last_name}
+                </td>
+                <td className="px-5 py-3 text-gray-600">
+                  {booking.room.type} {booking.room.roomNumber}
+                </td>
+                <td className="px-5 py-3 text-gray-600">
+                  {format(parseISO(booking.checkInDate), "dd/MM/yyyy")}
+                </td>
                 <td className="px-5 py-3 font-medium text-gray-900">
-                  ฿{booking.amount.toLocaleString()}
+                  ฿{Number(booking.totalAmount).toLocaleString()}
                 </td>
                 <td className="px-5 py-3">
-                  <StatusBadge status={booking.status} />
+                  <BookingStatusBadge status={booking.status} />
                 </td>
                 <td className="px-5 py-3">
                   <Link
-                    href={`/admin/bookings/${booking.id}`}
+                    href="/admin/bookings"
                     className="text-xs text-indigo-600 hover:text-indigo-700"
                   >
                     ดู
@@ -118,6 +83,16 @@ export default function BookingTable() {
                 </td>
               </tr>
             ))}
+            {bookings.length === 0 && (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="text-center py-8 text-gray-400 text-sm"
+                >
+                  ไม่มีข้อมูลการจอง
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

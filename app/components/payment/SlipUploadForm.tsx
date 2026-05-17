@@ -63,7 +63,6 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
       //     body: formData,
       //   },
       // );
-      // const res = await fetch(`/api/proxy/payment/upload-slip`, {
       // const res = await fetch(`http://localhost:3001/payment/upload-slip`, {
       const res = await fetch(
         `https://backend-booking-system-practice.onrender.com/payment/upload-slip`,

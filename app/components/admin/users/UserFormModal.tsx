@@ -15,19 +15,23 @@ const baseFields = {
   role: z.enum(["USER", "ADMIN"]),
 };
 
+const strongPassword = z
+  .string()
+  .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร")
+  .regex(/[A-Z]/, "ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว")
+  .regex(/[a-z]/, "ต้องมีตัวพิมพ์เล็กอย่างน้อย 1 ตัว")
+  .regex(/[^a-zA-Z0-9]/, "ต้องมีอักขระพิเศษอย่างน้อย 1 ตัว เช่น !@#$%");
+
 // สร้างใหม่ → password บังคับ
 const createSchema = z.object({
   ...baseFields,
-  password: z.string().min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"),
+  password: strongPassword,
 });
 
 // แก้ไข → password ไม่บังคับ (ถ้าไม่กรอก = ไม่เปลี่ยน)
 const editSchema = z.object({
   ...baseFields,
-  password: z
-    .string()
-    .min(8, "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร")
-    .or(z.literal("")),
+  password: strongPassword.or(z.literal("")),
 });
 
 type CreateValues = z.infer<typeof createSchema>;

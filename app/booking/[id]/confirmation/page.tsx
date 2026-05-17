@@ -174,7 +174,7 @@ export default async function ConfirmationPage({ params }: Props) {
       </main>
 
       <footer className="bg-stone-950 text-stone-500 text-center text-sm py-6">
-        <p>© 2026 Bookify · ระบบจองที่พักออนไลน์</p>
+        <p>© 2026 StayEase · ระบบจองที่พักออนไลน์</p>
       </footer>
     </div>
   );

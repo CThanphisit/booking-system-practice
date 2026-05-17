@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Eye, BanknoteIcon } from "lucide-react";
 import { format, parseISO } from "date-fns";
@@ -41,6 +41,10 @@ export default function PaymentsClient({ initialPayments }: Props) {
   const router = useRouter();
   const [payments, setPayments] = useState<FullPayment[]>(initialPayments);
   const [tab, setTab] = useState<Tab>("WAITING_REVIEW");
+
+  useEffect(() => {
+    setPayments(initialPayments);
+  }, [initialPayments]);
   const [search, setSearch] = useState("");
   const [reviewTarget, setReviewTarget] = useState<FullPayment | null>(null);
   const [refundTarget, setRefundTarget] = useState<FullPayment | null>(null);
@@ -78,9 +82,10 @@ export default function PaymentsClient({ initialPayments }: Props) {
       body: JSON.stringify({ action: "APPROVE" }),
     });
 
-    router.refresh();
-    // if (res.ok) {
-    // }
+    if (res.ok) {
+      setReviewTarget(null);
+      router.refresh();
+    }
   };
 
   const handleReject = async (id: string, note: string) => {
@@ -99,9 +104,10 @@ export default function PaymentsClient({ initialPayments }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "REJECT", note }),
     });
-    router.refresh();
-    // if (res.ok) {
-    // }
+    if (res.ok) {
+      setReviewTarget(null);
+      router.refresh();
+    }
   };
 
   const handleConfirmRefund = async (id: string, note: string) => {
@@ -120,6 +126,7 @@ export default function PaymentsClient({ initialPayments }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ note: note }),
     });
+    setRefundTarget(null);
     router.refresh();
   };
 

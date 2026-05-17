@@ -46,10 +46,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-md bg-amber-500 flex items-center justify-center">
-              <span className="text-stone-950 font-bold text-sm">B</span>
+              <span className="text-stone-950 font-bold text-sm">S</span>
             </div>
             <span className="text-white font-semibold tracking-wide text-lg">
-              Bookify
+              StayEase
             </span>
           </Link>
 

@@ -8,7 +8,11 @@ type HeaderProps = {
   showFilters?: boolean;
 };
 
-export default function Header({ title, subtitle, showFilters = true }: HeaderProps) {
+export default function Header({
+  title,
+  subtitle,
+  showFilters = true,
+}: HeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between gap-4">

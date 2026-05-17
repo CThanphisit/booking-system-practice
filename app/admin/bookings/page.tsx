@@ -219,6 +219,28 @@ export default function BookingsPage() {
     }
   };
 
+  const handleExportCSV = async () => {
+    const res = await fetch(
+      `/api/proxy/booking/export/csv?tab=${tab}&search=${search}&dateFrom=${dateFrom}&dateTo=${dateTo}&sortBy=${sortBy}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) return;
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `การจองทั้งหมด-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <Header
@@ -343,7 +365,10 @@ export default function BookingsPage() {
           </select>
 
           {/* Export */}
-          <button className="flex items-center gap-2 text-sm border border-gray-200 rounded-md px-3 py-2 hover:bg-gray-50">
+          <button
+            className="flex items-center gap-2 text-sm border border-gray-200 rounded-md px-3 py-2 hover:bg-gray-50"
+            onClick={handleExportCSV}
+          >
             <Download className="w-4 h-4" />
             Export
           </button>

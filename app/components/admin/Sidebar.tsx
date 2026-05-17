@@ -28,7 +28,7 @@ type MenuItem = {
 const mainMenu: MenuItem[] = [
   { label: "Dashboard", href: "/admin/dashboard_admin", icon: LayoutDashboard },
   { label: "Rooms", href: "/admin/rooms", icon: Home },
-  { label: "Bookings", href: "/admin/bookings", icon: Calendar, badge: 8 },
+  { label: "Bookings", href: "/admin/bookings", icon: Calendar },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   // { label: "Reviews", href: "/admin/reviews", icon: Star },
@@ -80,9 +80,9 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 py-4 border-b border-gray-200">
         <div className="w-8 h-8 rounded-md bg-indigo-600 flex items-center justify-center text-white font-medium text-sm">
-          B
+          S
         </div>
-        <span className="font-medium text-gray-900">Bookify Admin</span>
+        <span className="font-medium text-gray-900">StayEase Admin</span>
       </div>
 
       {/* Menu */}

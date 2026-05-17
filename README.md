@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏨 Booking System Practice
 
-## Getting Started
+โปรเจกนี้เป็นส่วนหนึ่งของ portfolio ส่วนตัว สร้างขึ้นเพื่อพัฒนาทักษะ **Fullstack Development** โดยเฉพาะฝั่ง Backend
 
-First, run the development server:
+ผมทำงานเป็น Frontend Developer มา 2 ปี จึงตัดสินใจใช้ AI ช่วยในส่วน UI/Frontend เพื่อเปิดพื้นที่ให้ตัวเองได้โฟกัสกับการเรียนรู้ **NestJS, Prisma, PostgreSQL** และ Backend Architecture อย่างจริงจัง
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Live Demo
+
+> ⚠️ Backend รันบน Render (Free Tier) อาจมี **cold start ~1–2 นาที** ในการโหลดครั้งแรก
+
+**[👉 เปิดดูได้เลย](https://booking-system-practice-alvy.vercel.app)**
+
+---
+
+## 🎯 สิ่งที่อยากเรียนรู้จากโปรเจกนี้
+
+- ออกแบบ **REST API** ด้วย NestJS — module, service, controller, guard
+- ใช้ **Prisma ORM** กับ PostgreSQL จริง ๆ ครั้งแรก
+- ทำ **Authentication** ด้วย JWT + Cookie แบบ Stateless
+- จัดการ **Role-based access** (User / Admin) ทั้ง Backend และ Frontend
+- เรียนรู้ deployment pipeline จริง (Render + Neon + Vercel)
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend (จุดโฟกัสหลัก)
+
+| Technology            | บทบาท                            |
+| --------------------- | -------------------------------- |
+| **NestJS**            | Framework หลัก                   |
+| **Prisma**            | ORM สำหรับ query PostgreSQL      |
+| **PostgreSQL (Neon)** | Serverless database              |
+| **JWT + Cookie**      | Authentication                   |
+| **Cloudinary**        | จัดเก็บรูปห้องพักและสลิปชำระเงิน |
+
+### Frontend (ใช้ AI ช่วย)
+
+| Technology                      | บทบาท                        |
+| ------------------------------- | ---------------------------- |
+| **Next.js 16**                  | React framework              |
+| **Tailwind CSS v4 + shadcn/ui** | UI components                |
+| **React Hook Form + Zod**       | Form validation              |
+| **Recharts**                    | Chart สำหรับ Admin dashboard |
+
+---
+
+## 📦 Features
+
+### สำหรับผู้ใช้งานทั่วไป
+
+- สมัครสมาชิก / เข้าสู่ระบบ
+- ค้นหาและกรองห้องพักตามวันที่, ประเภท, ราคา, จำนวนผู้เข้าพัก
+- จองห้องและอัปโหลดสลิปชำระเงิน
+- ดูประวัติการจองและสถานะแบบ real-time
+- ยกเลิกการจองและแก้ไขโปรไฟล์
+
+### สำหรับ Admin
+
+- Dashboard พร้อม Revenue Chart และ Room Type Chart
+- จัดการห้องพักครบวงจร (CRUD + อัปโหลดรูปผ่าน Cloudinary)
+- ตรวจสอบและอนุมัติ/ปฏิเสธสลิปชำระเงิน
+- จัดการผู้ใช้งานและการจองทั้งหมด
+
+---
+
+## 🔄 Booking Flow
+
+```
+จอง → PENDING → (อัปโหลดสลิป) → WAITING_REVIEW
+                                      ↓
+                              Admin ตรวจสอบ
+                           ↙              ↘
+                      APPROVED          REJECTED
+                          ↓
+                     CONFIRMED → CHECKED_IN → COMPLETED
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏗️ Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Browser
+  └── Next.js Frontend  (Vercel)
+        ├── /api/proxy/[...path]   ← ทุก request วิ่งผ่านตรงนี้
+        └── middleware.ts           ← ตรวจสอบ role ก่อน render
+              └── NestJS API  (Render)
+                    ├── PostgreSQL  (Neon)
+                    └── Cloudinary
+```
 
-## Learn More
+Frontend ไม่เรียก Backend โดยตรง — ทุก API call ผ่าน proxy route เพื่อให้ cookie ถูก forward อย่างถูกต้อง
 
-To learn more about Next.js, take a look at the following resources:
+### Route Access
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Path                                         | สิทธิ์               |
+| -------------------------------------------- | -------------------- |
+| `/`, `/rooms/*`, `/login`, `/register`       | ทุกคน                |
+| `/dashboard`, `/booking/*`, `/my-bookings/*` | ผู้ใช้ที่ login แล้ว |
+| `/admin/*`                                   | Admin เท่านั้น       |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🚀 Local Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Node.js 18+
+- pnpm
+
+### Setup
+
+```bash
+git clone <repo-url>
+cd booking-system-practice
+pnpm install
+```
+
+สร้างไฟล์ `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000/
+API_URL=http://localhost:3001
+```
+
+```bash
+pnpm dev    # port 3000
+```
+
+> Backend ต้องรันแยกบน port 3001
+
+---
+
+## ☁️ Deployment
+
+| ส่วน     | Platform   | หมายเหตุ                    |
+| -------- | ---------- | --------------------------- |
+| Frontend | Vercel     | Auto-deploy จาก main        |
+| Backend  | Render     | Free tier — มี cold start   |
+| Database | Neon       | Serverless PostgreSQL       |
+| Images   | Cloudinary | Room images + payment slips |
+
+---
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── admin/          # Admin pages
+│   ├── api/proxy/      # Catch-all API proxy
+│   ├── booking/        # Booking flow
+│   ├── components/     # Feature components
+│   ├── context/        # AuthContext
+│   ├── my-bookings/    # Booking history
+│   ├── profile/        # User profile
+│   ├── rooms/          # Room listing & detail
+│   └── schemas/        # Zod validation
+├── components/         # shadcn/ui primitives
+├── types/              # Shared TypeScript types
+└── middleware.ts       # Route protection
+```
