@@ -12,6 +12,13 @@
 
 **[👉 เปิดดูได้เลย](https://booking-system-practice-alvy.vercel.app)**
 
+### 🔑 Demo Credentials
+
+| Role      | Email              | Password     |
+| --------- | ------------------ | ------------ |
+| **User**  | test1@gmail.com    | @Aa12345678  |
+| **Admin** | admin@gmail.com    | @Aa12345678  |
+
 ---
 
 ## 🎯 สิ่งที่อยากเรียนรู้จากโปรเจกนี้
