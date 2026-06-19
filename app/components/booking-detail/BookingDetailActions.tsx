@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
 import { Booking, MyBooking } from "@/types";
 
@@ -66,10 +67,12 @@ export default function BookingDetailActions({ booking }: Props) {
         throw new Error(data.message ?? "เกิดข้อผิดพลาด");
       }
 
+      toast.success("ยกเลิกการจองเรียบร้อยแล้ว");
       setShowModal(false);
-      router.refresh(); // refresh server component เพื่อดึงข้อมูลใหม่
+      router.refresh();
     } catch (err: any) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }

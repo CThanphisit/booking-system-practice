@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "react-toastify";
 import { X, Loader2, CheckCircle } from "lucide-react";
 import { User } from "@/types";
 
@@ -79,6 +80,7 @@ function EditProfileForm({ user, onClose, onSuccess }: Props) {
     }
 
     setSuccess(true);
+    toast.success("บันทึกข้อมูลโปรไฟล์แล้ว");
     await onSuccess();
     setTimeout(onClose, 800);
   };

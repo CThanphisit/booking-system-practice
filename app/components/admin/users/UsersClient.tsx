@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { th } from "date-fns/locale";
@@ -32,9 +33,10 @@ export default function UsersClient({ users }: Props) {
       body: JSON.stringify(data),
     });
     if (!res.ok) {
-      alert("เกิดข้อผิดพลาดในการสร้างผู้ใช้");
+      toast.error("เกิดข้อผิดพลาดในการสร้างผู้ใช้");
     } else {
       setFormTarget(null);
+      toast.success("เพิ่มผู้ใช้ใหม่แล้ว");
       router.refresh();
     }
   };
@@ -42,18 +44,18 @@ export default function UsersClient({ users }: Props) {
   // ── Update ──────────────────────────────────────────────────────────────────
   const handleUpdate = async (data: UserFormData) => {
     if (!formTarget || formTarget === "new") return;
-    // await fetch(`${API}/users/${formTarget.id}`, {
-    //   method: "PATCH",
-    //   credentials: "include",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(data),
-    // });
-    await fetch(`/api/proxy/users/${formTarget.id}`, {
+    const res = await fetch(`/api/proxy/users/${formTarget.id}`, {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+    if (res.ok) {
+      setFormTarget(null);
+      toast.success("บันทึกข้อมูลผู้ใช้แล้ว");
+    } else {
+      toast.error("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+    }
     router.refresh();
   };
 

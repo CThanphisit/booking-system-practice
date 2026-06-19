@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { X, Trash2, Loader2, AlertTriangle } from "lucide-react";
 import { AdminUser } from "./UserFormModal";
 
@@ -17,6 +18,7 @@ export default function DeleteUserModal({ user, onClose, onConfirm }: Props) {
     setLoading(true);
     await onConfirm(user.id);
     setLoading(false);
+    toast.success(`ลบผู้ใช้ ${user.first_name} ${user.last_name} แล้ว`);
     onClose();
   };
 

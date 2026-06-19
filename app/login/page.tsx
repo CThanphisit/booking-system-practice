@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -89,6 +90,7 @@ function LoginForm() {
 
       const user = await getMe.json();
 
+      toast.success("เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับ!");
       if (user.role === "ADMIN") {
         router.push("/admin/dashboard_admin");
       } else {
@@ -112,7 +114,7 @@ function LoginForm() {
           priority
         />
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-stone-950/60 to-transparent" />
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-16 lg:px-20">

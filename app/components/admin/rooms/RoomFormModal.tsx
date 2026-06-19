@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { X, Plus, Trash2, Upload, Star, Loader2 } from "lucide-react";
 import { Room, RoomTypeName, RoomStatus } from "@/types";
 import z from "zod";
@@ -305,6 +306,7 @@ export default function RoomFormModal({ open, room, onClose, onSave }: Props) {
 
   const onSubmit = async (data: RoomFormValues) => {
     await onSave(data);
+    toast.success(room ? "บันทึกการแก้ไขห้องแล้ว" : "เพิ่มห้องใหม่แล้ว");
     onClose();
   };
 

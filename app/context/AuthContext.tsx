@@ -2,6 +2,7 @@
 
 import { User } from "@/types";
 import { usePathname, useRouter } from "next/navigation";
+import { ToastContainer } from "react-toastify";
 import React, {
   createContext,
   useContext,
@@ -77,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover draggable theme="light" />
     </AuthContext.Provider>
   );
 }

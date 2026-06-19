@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-toastify";
 import {
   X,
   Loader2,
@@ -39,6 +40,7 @@ export default function RefundConfirmModal({
     setLoading(true);
     await onConfirm(payment.id, note);
     setLoading(false);
+    toast.success("ดำเนินการคืนเงินแล้ว");
     onClose();
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { X, CheckCircle, XCircle, Loader2, ZoomIn } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { th } from "date-fns/locale";
@@ -47,6 +48,7 @@ export default function SlipReviewModal({ payment, onClose, onApprove, onReject 
     setLoading("approve");
     await onApprove(payment.id);
     setLoading(null);
+    toast.success("อนุมัติการชำระเงินแล้ว");
     onClose();
   };
 
@@ -55,6 +57,7 @@ export default function SlipReviewModal({ payment, onClose, onApprove, onReject 
     setLoading("reject");
     await onReject(payment.id, rejectNote);
     setLoading(null);
+    toast.error("ปฏิเสธสลิปเรียบร้อยแล้ว");
     onClose();
   };
 
@@ -198,7 +201,7 @@ export default function SlipReviewModal({ payment, onClose, onApprove, onReject 
       {/* Zoom modal */}
       {zoomSlip && (
         <div
-          className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-60 bg-black/80 flex items-center justify-center p-4"
           onClick={() => setZoomSlip(false)}
         >
           <img

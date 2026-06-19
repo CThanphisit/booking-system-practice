@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import { Upload, X, CheckCircle, Loader2, ImageIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -79,6 +80,7 @@ export default function SlipUploadForm({ bookingId, totalAmount }: Props) {
         throw new Error(data.message ?? "เกิดข้อผิดพลาด");
       }
 
+      toast.success("ส่งหลักฐานการชำระเงินแล้ว รอการตรวจสอบจาก Admin");
       router.push(`/booking/${bookingId}/confirmation`);
     } catch (err: any) {
       setError(err.message);

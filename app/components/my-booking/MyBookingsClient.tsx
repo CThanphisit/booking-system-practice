@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { toast } from "react-toastify";
 import { MyBooking, BookingStatus } from "@/types";
 import BookingCard from "./BookingCard";
 import BookingStats from "./BookingStats";
@@ -25,7 +26,6 @@ export default function MyBookingsClient({ initialBookings }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("ALL");
   const [search, setSearch] = useState("");
   const [cancelTarget, setCancelTarget] = useState<MyBooking | null>(null);
-  const [toast, setToast] = useState("");
 
   // ─── Filter ────────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -48,14 +48,9 @@ export default function MyBookingsClient({ initialBookings }: Props) {
       : bookings.filter((b) => b.status === tab).length;
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2500);
-  };
-
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    showToast(`คัดลอก ${code} แล้ว`);
+    toast.success(`คัดลอก ${code} แล้ว`);
   };
 
   const handleCancel = async (
@@ -85,11 +80,13 @@ export default function MyBookingsClient({ initialBookings }: Props) {
       });
 
       if (res.ok) {
-        showToast("ยกเลิกการจองเรียบร้อยแล้ว");
+        toast.success("ยกเลิกการจองเรียบร้อยแล้ว");
         window.location.reload();
+      } else {
+        toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
       }
     } catch (err) {
-      console.log(err);
+      toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     }
   };
 
@@ -181,12 +178,6 @@ export default function MyBookingsClient({ initialBookings }: Props) {
         />
       )}
 
-      {/* Toast */}
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-sm px-5 py-2.5 rounded-full shadow-lg z-50 animate-fade-in">
-          {toast}
-        </div>
-      )}
     </div>
   );
 }
